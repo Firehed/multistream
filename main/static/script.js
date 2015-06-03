@@ -1,6 +1,6 @@
-var querying_twitch = {};
-var typing_timers = {};
-var done_typing_interval = 1000;
+//var querying_twitch = {};
+//var typing_timers = {};
+//var done_typing_interval = 1000;
 var $quickpicks = 0;
 var default_live_filter = "*";
 var default_tag_filter = ".tag-kbmod";
@@ -39,8 +39,6 @@ $(document).ready( function() {
 			
 			$("<div id=popupoverlay style='display:none'>").insertAfter($(this)).click(function(){$('#sidebar .edit.sidebar-button').click();}).fadeIn();
 			$("<div id=popupform style='display:none'>").load($(this).attr('href') + ' #buildlayoutform', function() {
-				querying_twitch = {};
-				typing_timers = {};
 				$quickpicks = 0; //force isotope re-init
 				add_index_event_handlers($(this));
 				$(this).fadeIn();
@@ -59,47 +57,13 @@ $(document).ready( function() {
 
 function add_index_event_handlers($element) {
 	
-	$element.find('input.deletable').wrap('<span class="deleteicon" />').after($('<span/>').click(function() {
-		$(this).prev('input').val('').focus().parent().siblings('.streamstatusicon')
-				.removeClass('exists')
-				.removeClass('doesntexist')
-				.removeClass('existsandstreaming');
-		update_layoutgroup_display();
-		update_selected_channels();
-	}));
-	
-	$element.find('.streamfield').each( function() {
-		querying_twitch[$(this).attr('id')] = false;
-	});
-	
-	$element.find('.streamfield').bind('paste', function() { 
-		var element = this;
-		setTimeout(function () {
-			$(element).keyup();
-		}, 100);
-	});
-	
-	$element.find('.streamfield').keyup(function(){
-		var this_id = $(this).attr('id');
-		clearTimeout(typing_timers[this_id]);
-		if ($(this).val()) {
-			typing_timers[this_id] = setTimeout('check_field("' + this_id + '");', done_typing_interval);
-		} else {
-			$(this).parent().siblings('.streamstatusicon')
-				.removeClass('exists')
-				.removeClass('doesntexist')
-				.removeClass('existsandstreaming');
-		}
-	});
-	
-	
-	$element.find('.streamfield').keyup(function() {
+	$element.find('.streamfield').streamfield().keyup(function() {
 		update_layoutgroup_display();
 		update_selected_channels();
 	});
-	
+		
 	setTimeout(function(){$element.find('.streamfield').filter(function(){return this.value==""}).first().focus();},100);
-	
+
 
 	$element.find('.layoutselector').click( function() { 
 		select_layout_button( $(this).attr('id') ); 
@@ -133,10 +97,7 @@ function add_index_event_handlers($element) {
 	
 	$element.find('#clearbutton').click(function(e){
 		e.preventDefault();
-		$('.streamfield').val("").parent().siblings('.streamstatusicon')
-				.removeClass('exists')
-				.removeClass('doesntexist')
-				.removeClass('existsandstreaming');
+		$('.streamfield').each(function(){$.fn.streamfield.clear($(this).attr('id'))});
 		update_layoutgroup_display();
 		update_selected_channels();
 	});	
@@ -272,7 +233,6 @@ function reindex_objects() {
 	}
 }
 
-
 function select_layout_button( layout_cssid ) {
 	var layout_selector = $('#' + layout_cssid );
 	
@@ -280,62 +240,6 @@ function select_layout_button( layout_cssid ) {
 	layout_selector.find('input[name=layout]').attr('checked','checked');
 	layout_selector.siblings().not(this).removeClass('selected');
 	layout_selector.addClass('selected');
-}
-
-function reformat_field(field_id) {
-	var $field = $('#' + field_id);
-	var val = $field.val()
-	val = val.replace(/http[s]?:\/\//i, '');
-	val = val.replace(/(www.)?twitch\.tv/, '');
-	val = val.replace('/', '');
-	val = val.replace(' ', '');
-	
-	$field.val(val);
-}
-
-function check_field(field_id) {
-	reformat_field(field_id);
-	if (querying_twitch[field_id]) return;
-	var $field = $('#' + field_id);
-	var channel_tag = $field.val();
-	
-	if (channel_tag) {
-		
-		querying_twitch[field_id] = true;
-		$field.parent().siblings('.streamstatusicon')
-			.addClass('loading')
-			.removeClass('exists')
-			.removeClass('doesntexist')
-			.removeClass('existsandstreaming');
-		$.ajax({
-			type: "GET",
-			url: "https://api.twitch.tv/kraken/streams/" + channel_tag,
-			beforeSend: function(xhr) {
-				xhr.setRequestHeader("Accept", "application/vnd.twitchtv.v2+json");
-				xhr.setRequestHeader("Client-ID","jm46kg877p6t97wz3775ovq19orwvql");
-			},
-			dataType: "jsonp",
-			success: function(data,textStatus,jqXHR) {
-				if ( data['status'] == 404 ) {
-					$field.parent().siblings('.streamstatusicon').addClass('doesntexist');
-				} else {
-					if ( data['stream'] ) {
-						$field.parent().siblings('.streamstatusicon').addClass('existsandstreaming');
-					}
-					else {
-						$field.parent().siblings('.streamstatusicon').addClass('exists');
-					}
-				}
-				querying_twitch[field_id] = false;
-				$field.parent().siblings('.streamstatusicon').removeClass('loading');
-			},
-			error: function(jqXHR,textStatus,errorThrown) {
-				console.log('Error:' +textStatus + " ; " + errorThrown);
-				querying_twitch[field_id] = false;
-				$field.parent().siblings('.streamstatusicon').removeClass('loading');
-			}
-		});
-	}
 }
 
 function add_to_form_streams(streamname) {
@@ -350,10 +254,8 @@ function add_to_form_streams(streamname) {
 
 function remove_from_form_streams(streamname) {
 	$already_selected = $('.streamfield').filter(function(){return this.value==streamname});
-	$already_selected.val("").parent().siblings('.streamstatusicon')
-				.removeClass('exists')
-				.removeClass('doesntexist')
-				.removeClass('existsandstreaming');
+	$already_selected.val("")
+	$.fn.streamfield.clear($already_selected.attr('id'));
 }
 
 function update_selected_channels() {
@@ -479,10 +381,13 @@ function get_first_valid_layout_index(num_streams=null,chat=null) {
 }
 
 function get_valid_layout_indexes(num_streams=null,chat=null) {
-	if(num_streams !== null)
-		return Object.keys(layout_groups[num_streams]);
+	if(num_streams === null)
+		num_streams = get_num_visible_streams();
+	
+	if(num_streams === 0)
+		return 0;
 	else
-		return Object.keys(layout_groups[get_num_visible_streams()]);
+		return Object.keys(layout_groups[num_streams]);
 }
 
 function get_current_chat() {

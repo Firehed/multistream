@@ -1,18 +1,5 @@
 {% extends "base.html" %}
 {% block script %}
-	<script type=text/javascript>
-		// var valid_layouts = [{% for g in layout_groups %}{% for l in g %}{{ l.index }}, {% endfor %}{% endfor %}];
-		var layout_groups = {
-				{% for g in layout_groups %}
-				{{ forloop.counter }}: {
-					{% for l in g %}{{ l.index }}: 
-						{
-						'haschat': true,
-						},
-					{% endfor %}},
-				{% endfor %}
-		};
-	</script>
 {% endblock script %}
 {% block styles %}
 	<style type="text/css">

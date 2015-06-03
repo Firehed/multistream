@@ -347,16 +347,16 @@ span.deleteicon {
 	height: 16px;
 	margin-left: 16px;
 	
-	&.loading {
+	&[data-status="loading"] {
 		background: url('images/loading.gif') left center no-repeat;
 	}
-	&.doesntexist {
+	&[data-status="doesntexist"] {
 		background: url('images/strikethrough-black.png') left center no-repeat;
 	}
-	&.exists {
+	&[data-status="exists"] {
 		background: url('images/checkmark-black.png') left center no-repeat;
 	}
-	&.existsandstreaming {
+	&[data-status="existsandstreaming"] {
 		background: url('images/checkmark-camera-black.png') left center no-repeat;
 	}
 }

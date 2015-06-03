@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block script %}
-	<script src='http://Q1MediaHydraPlatform.com/ads/video/controller.php?qid=5503132d7de38ca82fe6dd8e&qz=1'></script>
+	{% if use_live_embeds %}<script src='http://Q1MediaHydraPlatform.com/ads/video/controller.php?qid=5503132d7de38ca82fe6dd8e&qz=1'></script>{% endif %}
 {% endblock %}
 {% block body %}
 	<div id="contentwrapper" class="indextemplate">
