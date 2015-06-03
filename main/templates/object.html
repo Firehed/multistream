@@ -1,0 +1,60 @@
+
+					{% if obj.objtype == "stream" %}
+					<div class="streamcontainer{% if obj.index == 0 %} audio chat{% endif %}" data-tag="{{ obj.tag }}" data-index="{{ obj.index }}" data-object-type="stream">
+						{% if use_live_embeds %}
+							{% if use_flash_player %}<object type="application/x-shockwave-flash" data="http://www.twitch.tv/widgets/live_embed_player.swf?channel={{ obj.tag }}" bgcolor="#000000" wmode="transparent">
+								<param name="allowFullScreen" value="true" />
+								<param name="allowScriptAccess" value="always" />
+								<param name="allowNetworking" value="all" />
+								<param name="movie" value="http://www.twitch.tv/widgets/live_embed_player.swf" />
+								<param name="flashvars" value="hostname=www.twitch.tv&channel={{ obj.tag }}&auto_play=true&start_volume=50" />
+								<param name="wmode" value="transparent" />
+							</object>
+							{% else %}
+							 <iframe type="text/html" src="http://www.twitch.tv/{{ obj.tag }}/hls" frameborder="0"></iframe>
+							{% endif %}
+						{% else %}
+							<!-- Stream embed would go here -->
+						{% endif %}
+					</div>
+					<div class="streamoverlay{% if obj.index == 0 %} audio chat{% endif %}" data-tag="{{ obj.tag }}" data-index="{{ obj.index }}" data-object-type="stream">
+						<div class='audioicon'></div>
+						<div class='chaticon'></div>
+						<div class='overlaypopup'>
+							<div class='overlaycaption'>
+								<span class="streamname">{{ obj.tag }}</span>
+							</div>
+							<div class='mainbuttons'>
+								<button class='roundedleft audiobutton' onClick="choose_stream_audio('{{ obj.tag }}');return false;" title='Audio'><span class="audioicon"></span> Audio</button>
+								<button class='square bothbutton' onClick="choose_stream_both('{{ obj.tag }}');return false;" title='Both'><span class="bothicon"></span> Both</button>
+								<button class='roundedright chatbutton' onClick="choose_stream_chat('{{ obj.tag }}');return false;" title='Chat'><span class="chaticon"></span> Chat</button>
+							
+							</div>
+							<div class='auxbuttons'>
+								<button class='profilebutton' onClick="window.open('http://twitch.tv/{{ obj.tag }}/profile', '_blank');" title='Profile'><span class="profileicon"></span> Profile &raquo;</button>
+								<button class='reloadstream' onClick="reload_stream('{{ obj.tag }}');" title='Reload'><span class="reloadicon"></span> Reload</button>
+								<button class='closebutton' onClick="close_stream_and_chat('{{ obj.tag }}');" title='Close'><span class="closeicon"></span> Close</button>
+							</div>
+						</div>
+					</div>
+					
+					{% elif obj.objtype == "chat" %}
+					
+					<div class="chatcontainer{% if obj.index == 0 %} current{% endif %}" data-tag="{{ obj.tag }}" data-index="{{ obj.index }}" data-object-type="chat">
+						{% if use_live_embeds %}
+							<iframe frameborder="0" scrolling="no" src="http://twitch.tv/chat/embed?channel={{ obj.tag }}&amp;popout_chat=true"></iframe>
+						{% else %}
+							<!-- Chat embed would go here -->
+						{% endif %}
+						<div class="chatcaption"> 
+							<button class="streamname chatmenuopener"><span class='chaticon'></span> {{ obj.tag }} <span class="arrow"></span></button>
+							<button class="reloadchat"><span class="reloadicon"></span> Reload</button>
+							<ol class='chatmenu'>
+							{% for obj2 in obj.overlapped_chats %}
+								<li class='chatselector{{ obj2.index }}' onClick="choose_stream_chat('{{ obj2.tag }}');return false;"><span class="chaticon"></span> <span class="streamname">{{ obj2.tag }}</span></li>
+							{% endfor %}
+							</ol>
+						</div>
+					</div>
+
+					{% endif %}

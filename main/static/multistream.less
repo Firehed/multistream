@@ -1,0 +1,943 @@
+
+@defaultfont: 'PT Sans', sans-serif;
+@black: #171717;
+@white: #ffffff;
+@grey: #666666;
+@ltgrey: #c8c8c8;
+@vltgrey: #aaaaaa;
+@blue: #1969AB;
+
+* { margin: 0; }
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.floatleft {
+	float: left;
+}
+.floatright {
+	float: right;
+}
+
+body, html {
+	height: 100%;
+}
+
+body {
+	font-family: @defaultfont;
+	background: url('images/body-bg.jpg') center center fixed;
+	background-size: cover;
+}
+
+input[type='text'], input[type='password'], textarea {
+	font-family: @defaultfont;
+	background: @white;
+	color: @black;
+}
+
+/* Transitions, YAY */
+a:link, 
+.layoutselector,
+button,
+.channel {
+	transition: background-color 0.5s, color 0.5s, opacity 0.5s;
+}
+
+button, .button {
+	font-family: @defaultfont;
+	background: rgba(0, 0, 0, 0.1);
+	color: @black;
+	border: solid 1px @black;
+	border-radius: 5px;
+	font-weight: bold;
+	font-size: 18px;
+	cursor: pointer;
+	
+	&:hover {
+		background: rgba(0, 0, 0, 0.2);
+	}
+	
+	.viewtemplate & {
+		background: rgba(255, 255, 255, 0.9);
+		border: none;
+		margin: 1px;
+		color: @black;
+		border-radius: 5px;
+		font-weight: bold;
+		cursor: pointer;
+		text-align: center;
+		font-size: 16px;
+		line-height: 18px;
+		padding: 2px 4px;
+		
+		&:hover {
+			background: @white;	
+		}
+		&:active {
+			background: rgba(220, 220, 220, 1);	
+		}
+	}
+
+	&.roundedleft {
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+	&.roundedright {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+	&.square {
+		border-radius: 0;
+	}
+	
+	.streamoverlay & {
+		line-height: 20px;
+	}
+	
+}
+
+.tooltiponly {
+	.tooltip;
+	font-size: 0;
+	
+	&:after {
+		font-size: 16px;
+	}
+}
+
+.tooltip {
+	position: relative;
+	
+	&:hover:after{
+		background: @black;
+		opacity: 0.8;
+		border-radius: 5px;
+		bottom: 26px;
+		color: @white;
+		content: attr(title);
+		left: -2em;
+		padding: 5px 15px;
+		position: absolute;
+		z-index: 98;
+		width: 4em;
+	}
+}
+
+span.deleteicon {
+	position: relative;
+	
+	span {
+		position: absolute;
+		display: block;
+		top: 1px;
+		right: 5px;
+		width: 16px;
+		height: 16px;
+		background: url('images/delete-icon-black.png') no-repeat center center;
+		cursor: pointer;
+		opacity: 0.4;
+		
+		&:hover {
+			opacity: 0.7;
+		}
+	}
+	
+	input {
+		padding-right: 16px;
+	}
+}
+
+
+
+
+#bodywrapper {
+	height: 100%;
+}
+#backgroundoverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.7);
+	overflow: auto;	
+	z-index: -2;
+}
+#sidebar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 60px;
+	
+	a.logo {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		display: block;
+		width: 100%;
+		height: 280px;
+		background: url('images/multistream-white-sideways2.png') center center no-repeat;
+	}
+	
+	a.edit {
+		display: block;
+		background: rgba(0,0,0,0.5) url('images/edit-white.png') center center no-repeat;
+		border-radius: 5px;
+		margin: 5px;
+		opacity: 0.5;
+		border: solid 1px #888;
+	}
+	
+	a.edit:hover,
+	a.edit.selected {
+		opacity: 1;
+	}
+	
+	.sidebar-button {
+		width: 50px;
+		height: 50px;
+	}
+}
+
+
+#contentwrapper {
+	margin: 0 auto;
+	width: 100%;
+	height: 100%;
+	
+	&.indextemplate {
+		position: absolute;
+		width: 80%;
+		max-width: 1030px;
+		height: auto;
+		left: 50%;
+		margin-left: -523px;
+		box-shadow: 0 0 5px 5px rgba(0,0,0,0.2);
+		background: white;
+		margin-bottom: 10%;
+	}
+	
+	&.viewtemplate {
+		margin-left: 3%;
+		margin-left: calc(60px);
+		width: 97%;
+		width: calc(100% - 60px);
+		overflow: hidden;
+	}
+}
+
+
+#logo {
+	display: block;
+	width: 100%;
+	height: 120px;
+	background: @black url('images/multi-logo.png') 40px 40px no-repeat;
+}
+
+#sponsorlogo {
+	position: absolute;
+	right: 50px;
+	top: 70px;
+	display: block;
+	width: 214px;
+	height: 44px;
+	background: url('images/pcpplogo.png') center center no-repeat;
+}
+
+#menu-primary-menu {
+	width: 100%;
+	list-style-type: none;
+	padding: 5px 0;
+	text-align: center;
+	background: #eee;
+	
+	li {
+		display: inline-block;
+		font-size: 80%;
+		
+		a {
+			color: @black;
+			text-decoration: none;
+			padding: 2px 5px;
+			
+			&:hover {
+				background: #1969ab;
+				color: white;
+			}
+		}
+	}
+}
+
+
+#layoutwrapper {
+	position:relative; 
+	margin: 0 auto;
+	
+	&.dimmed {
+		z-index: -1;
+	}
+}
+
+#buildlayoutform {
+	label, .streamfield {
+		font-size: 20px;
+		padding: .1em .2em;
+		margin: 5px 0;
+	}
+	
+	label {
+		font-weight: bold;
+		padding-right: 20px;
+	}
+	
+	.streamfield {
+		border: solid 1px @grey;
+		border-radius: 5px;
+	}
+	
+	#submitbuttoncontainer {
+		margin: 10px 45px 20px;
+		display: none;
+	}
+}
+
+#submitbuttoncontainer {
+	text-align: center;
+	
+	button {
+		width: 22%;
+		margin: 0 5px;
+	}	
+}
+
+.streamfieldcontainer {
+	text-align: center;
+}
+
+.formcaption {
+	text-align: center;
+	font-size: 80%;
+	font-style: italic;
+	color: #888;
+	position: absolute;
+	right: 1em;
+	top: 1em;
+	
+	a {
+		color: @grey;
+		text-decoration: none;
+		
+		&:hover {
+			color: #444;
+		}
+	}
+}
+
+.streamstatusicon {
+	vertical-align: middle;
+	display: inline-block;
+	width: 38px;
+	height: 16px;
+	margin-left: 16px;
+	
+	&.loading {
+		background: url('images/loading.gif') left center no-repeat;
+	}
+	&.doesntexist {
+		background: url('images/strikethrough-black.png') left center no-repeat;
+	}
+	&.exists {
+		background: url('images/checkmark-black.png') left center no-repeat;
+	}
+	&.existsandstreaming {
+		background: url('images/checkmark-camera-black.png') left center no-repeat;
+	}
+}
+
+
+#popupoverlay {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 99;
+	background: black;
+	opacity: 0.4;
+}
+
+#popupform {
+	position: fixed;
+	left: 70px;
+	top: 10px;
+	z-index: 100;
+	width: 700px;
+	background: white;
+	color: @black;
+	box-shadow: 0 0 5px 5px rgba(0,0,0,0.3);
+	max-height: 95%;
+	overflow: auto;
+	
+	#channellist {
+		font-size: 80%;
+	}
+	
+	.channellist {
+		.channel {
+			width: 11.5%;
+			width: calc(12.5% - 10px);
+			height: 40px;
+			
+			&.live {
+				width: 23.5%;
+				width: calc(25% - 10px);
+				height: 90px;
+			}
+		}
+		
+		.grid-sizer {
+			width: 12.5%;
+			height: 40px;
+		}
+	}
+}
+
+
+.callout {
+	&:before {
+	content: "";
+	position: absolute;
+	top: 10px;
+	left: -11px;
+	border-width: 0px 0px 11px 11px;
+	border-style: solid;
+	border-color: @white transparent;
+	display: block;
+	width: 0px;
+	}
+	
+	&:after {
+	content: "";
+	position: absolute;
+	left: -11px;
+	top: 21px;
+	border-width: 11px 0px 0px 11px;
+	border-style: solid;
+	border-color: @white transparent;
+	display: block;
+	width: 0px;
+	}
+}
+
+
+#quickpicks {
+	text-align:left;
+	padding: 0 5px 5px;
+	
+	button {
+		border-radius: 0;
+		float: none;
+		font-size: 80%;
+		width: auto;
+		
+		&.selected {
+			background: @grey;
+			color: white;
+		}
+	}
+}
+
+
+.layoutgroup {
+	margin-top: 20px;
+	text-align: center;
+	display: none;
+	
+	#sidebar & {
+		margin-top: 0;
+		
+		&.current {
+			display: block;
+		}
+	}
+}
+
+.layoutselector {
+	display: inline-block;
+	padding: 5px;
+	cursor: pointer;
+	border-radius: 5px;
+	vertical-align: middle;
+	
+	#sidebar & {
+		opacity: 0.5;
+		
+		&.current,
+		&.selected,
+		&:hover {
+			opacity: 1;
+		}
+	}
+	
+	input {
+		position: absolute;
+		left: -9999px;
+	}
+	
+	&:hover,
+	&.selected {
+		background: rgba(0,0,0,0.1);
+		padding: 4px;
+		border: solid 1px rgba(0,0,0,0.3);
+	}
+	
+	&:hover {
+		background: rgba(0,0,0,0.2);
+	}
+}
+
+
+.streamthumb, 
+.streamcontainer {
+	background: #006dc2;
+}
+
+.chatthumb,
+.chatcontainer {
+	background: #ab9dc5;
+}
+
+.streamcontainer {
+	&.audio {
+		background: #107dd2;
+	}
+	&.chat {
+
+	}
+}
+
+.streamthumb,
+.streamcontainer,
+.chatthumb, 
+.chatcontainer {
+	color: white;
+}
+
+.streamthumb,
+.chatthumb {
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+.streamcontainer {
+	transition: top 0.5s, left 0.5s, height 0.5s, width 0.5s;
+	position:absolute;
+	display: none;
+	
+	object {
+		height: 100%;
+		width: 100%;
+	}
+}
+
+.chatcontainer {
+	transition: top 0.5s, left 0.5s, height 0.5s, width 0.5s;
+	display: none;
+	z-index: -10;
+	visibility: hidden;
+	position:absolute; 
+	/* min-width: 300px; */
+	/*min-height: 360px;*/
+	
+	iframe {
+		height: 99%;
+		height: calc(100% - 25px);
+		width: 100%;
+	}
+	
+	&.current {
+		z-index: 0;
+		visibility: visible;
+	}
+}
+
+
+.streamoverlay {
+	display: none;
+	position:absolute; 
+	z-index:10; 
+	
+	& > .audioicon,
+	& > .chaticon {
+		float: right;
+		clear: right;
+		padding: 4px 8px;
+		display: none;
+		opacity: 0.4;
+	}
+	
+	.mainbuttons {
+		button {
+			.tooltiponly;
+		}
+	}
+
+	.auxbuttons {
+		position: absolute;
+		right: 0.5em;
+		top: 0.5em;
+		text-align: left;
+		
+		button {
+			.tooltiponly;
+			display: block;
+		}
+	}
+
+}
+
+.audioicon {
+	vertical-align: top;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: url('images/audio-white.png') center center no-repeat;
+	
+	button & {
+		background-image: url('images/audio-black.png');
+		padding: 0;
+		display: inline-block;
+		float: none;
+	}
+}
+
+.chaticon {
+	vertical-align: middle;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: url('images/chat-white.png') center center no-repeat;
+	
+	button & {
+		background-image: url('images/chat-black.png');
+		padding: 0;
+		display: inline-block;
+		float: none;
+	}
+}
+
+.bothicon {
+	vertical-align: middle;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: url('images/both-icon-white.png') center center no-repeat;
+	
+	button & {
+		background-image: url('images/both-icon-black.png');
+		padding: 0;
+		display: inline-block;
+		float: none;
+	}
+}
+
+.profileicon {
+	vertical-align: middle;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: url('images/profile-white.png') center center no-repeat;
+	
+	button & {
+		background-image: url('images/profile-black.png');
+		padding: 0;
+		display: inline-block;
+		float: none;
+	}
+}
+
+.reloadicon {
+	vertical-align: middle;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: url('images/reload-white.png') center center no-repeat;
+	
+	button & {
+		background-image: url('images/reload-black.png');
+	}
+}
+
+.closeicon {
+	vertical-align: middle;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: url('images/delete-icon-white.png') center center no-repeat;
+	
+	button & {
+		background-image: url('images/delete-icon-black.png');
+	}
+}
+
+
+/* these classes get added to the containers that are the currently selected audio/chat */
+.audio {
+	& > .audioicon {
+		display: block;
+	}
+}
+
+.chat {
+	& > .chaticon {
+		display: block;
+	}
+}
+
+.audio .audiobutton,
+.chat .chatbutton,
+.audio.chat .bothbutton {
+	background: #aaa;
+	cursor: default;
+	
+	&:hover {
+		background: #aaa;
+	}
+}
+
+
+.overlaypopup {
+	display: none;
+	position: absolute;
+	left: 0%;
+	top: 50%;
+	width: 100%;
+	text-align: center;
+	background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.7);
+	padding: 1em 0 1.5em;
+	margin-top: -25px;
+	
+	.streamoverlay:hover & {
+		display: inline;
+	}
+}
+
+.overlaycaption {
+	color: white;
+	font-size: 24px;
+}
+
+.streamname {
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.chatcaption {
+	position: absolute;
+	bottom: 0;
+	display: block;
+	width: 99%;
+	background: @black;
+	color: white;
+	font-size: 16px;
+	line-height: 25px;
+	padding: 0 0.5%;
+	background: rgba(0,0,0,0.2);
+}
+
+button.reloadchat {
+	float: right;
+}
+
+.arrow {
+	display: inline-block;
+	vertical-align: middle;
+	height: 10px;
+	width: 10px;
+	background: url('images/arrow-up-white.png') center center no-repeat;
+	
+	button & {
+		background-image: url('images/arrow-up-black.png');
+	}
+}
+
+
+.chatmenuopener {
+	cursor: pointer;
+	position: relative;
+}
+
+ol.chatmenu {
+	display: none;
+	list-style: none;
+	margin: 0;
+	position: absolute;
+	bottom: 25px;
+	left: 5px;
+	padding: 5px;
+	background: #ab9dc5;
+	box-shadow: 0 -3px 2px 2px rgba(0, 0, 0, 0.1); 
+	
+	li {
+		color: white;
+		text-align: left;
+		cursor: pointer;
+		display: none;
+	}
+}
+
+
+.channellist {
+	.channel {
+		width: 11.5%;
+		width: calc(12.5% - 10px);
+		height: 60px;
+		float: left;
+		padding: 0.5%;
+		padding: calc(5px);
+		cursor: pointer;
+		border-radius: 5px;
+		vertical-align: middle;
+		opacity: 0.5;
+		
+		&:hover,
+		&.selected {
+			background: rgba(0,0,0,0.1);
+			padding: 0.5%;
+			padding: calc(4px);
+			border: solid 1px rgba(0,0,0,0.3);
+		}
+	}
+	
+	.grid-sizer {
+		width: 12.5%;
+		height: 60px;
+	}
+	
+	.channel {
+		&.live {
+			opacity: 0.7;
+			width: 23.5%;
+			width: calc(25% - 10px);
+			height: 130px;
+			
+			&:hover {
+				opacity: 0.8;
+			}
+			
+			.channelcaption {
+				font-size: 80%;
+			}
+		}
+		&:hover {
+			opacity: 0.6;
+		}
+		&.selected {
+			opacity: 1;
+			
+			.channelcaption {
+				background-image: url('images/checkmark-white.png');
+				background-position: 5px center;
+				background-repeat: no-repeat;
+			}
+		}
+	}
+	
+	
+	.channelimage {
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		width: 100%;
+		height: 100%;
+		position: relative;
+	}
+	.channelname {
+		text-transform: uppercase;
+		font-weight: bold;
+	}
+	.channelcaption {
+		position: absolute;
+		bottom: 0;
+		color: @white;
+		font-size: 60%;
+		text-align: right;
+		background: rgba(0,0,0,0.4);
+		padding: 1% 2% 2%;
+		width: 96%;
+	}
+	.game {
+		font-style: italic;
+	}
+}
+
+
+/* Jquery UI Overrides */
+
+.ui-widget, .ui-widget button {
+	font-family: inherit;
+	font-size: inherit;
+}
+.ui-widget-content {
+	border: none;
+	background: transparent;
+}
+#featured.ui-tabs-panel {
+	padding: 1em 40px;
+}
+.ui-tabs, .ui-tabs .ui-tabs-nav {
+	padding: 0;
+	border-radius: 0;
+}
+.ui-tabs .ui-widget-header {
+	background: @black;
+	border: none;
+	padding: 20px 40px 20px;
+	
+	#popupform & {
+		padding: 5px ;
+	}
+}
+.ui-tabs .ui-tabs-nav li {
+	margin: 0;
+	border-radius: 0;
+	border: none;
+}
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	padding: 4px 14px;
+	
+	&:hover {
+		color: @white;
+		background: @vltgrey;
+	}
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+	background: transparent;
+	font-size: 19.5px;
+	
+	#popupform & {
+		font-size: inherit;
+	}
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+	
+}
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
+	color: @ltgrey;
+}
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+	background: @blue;
+	
+	&:hover {
+		background: @blue;
+	}
+}
+
+

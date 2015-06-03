@@ -1,0 +1,30 @@
+<a href="http://kbmod.com/multistream/">Multistream</a>
+{% if channel %}
+<span class='callout'>
+	{% if channel.live %}
+	<span class='livenow'>
+	<span class='channelname'>{{ channel.name }}</span> is live
+	</span>
+	{% else %}
+	<span class='notlive'>
+	<span class='channelname'>{{ channel.name }}</span> is not live
+	</span>
+	{% endif %}
+</span>
+{% elif channels %}
+<span class='callout'>
+	{% if kbmod.live %}
+		<a href="http://kbmod.com/multistream/kbmod/">
+			<span class='channelcount'>KBMOD is Live!</span>
+		</a>
+	{% else %}
+		<a href="http://kbmod.com/multistream/#featured/all">
+		{% if channels|length = 1 %}
+		<span class='channelcount'>One live channel</span>
+		{% else %}
+		<span class='channelcount'>{{ channels|length }} live channels</span>
+		{% endif %}
+		</a>
+	{% endif %}
+</span>
+{% endif %}

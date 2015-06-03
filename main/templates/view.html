@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block script %}
+	<script type=text/javascript>
+		// var valid_layouts = [{% for g in layout_groups %}{% for l in g %}{{ l.index }}, {% endfor %}{% endfor %}];
+		var layout_groups = {
+				{% for g in layout_groups %}
+				{{ forloop.counter }}: {
+					{% for l in g %}{{ l.index }}: 
+						{
+						'haschat': true,
+						},
+					{% endfor %}},
+				{% endfor %}
+		};
+	</script>
+{% endblock script %}
+{% block styles %}
+	<style type="text/css">
+{% for g in layout_groups %}
+	{% for l in g %}
+		#layoutwrapper[data-layout-index="{{ l.index }}"] { width:{{ l.max_x }}%; height:{{ l.max_y }}%; }
+		{% for s in l.streams %}
+		#layoutwrapper[data-layout-index="{{ l.index }}"] .streamcontainer[data-index="{{ s.index }}"] { display: block; width:{{ s.dim.x }}%; height:{{ s.dim.y }}%; left:{{ s.pos.x }}%; top:{{ s.pos.y }}%; }
+		#layoutwrapper[data-layout-index="{{ l.index }}"] .streamoverlay[data-index="{{ s.index }}"] { display: block; width:{{ s.dim.x }}%; height:{{ s.dim.y|add:-20 }}%; left:{{ s.pos.x }}%; top:{{ s.pos.y|add:4 }}%; }
+		{% endfor %}
+		{% for c in l.chats %}
+		#layoutwrapper[data-layout-index="{{ l.index }}"] .chatcontainer[data-index="{{ c.index }}"] { display: block; width:{{ c.dim.x }}%; height:{{ c.dim.y }}%; left:{{ c.pos.x }}%; top:{{ c.pos.y }}%; }
+			{% if c.overlapped_chats|length < 2 %}
+				#layoutwrapper[data-layout-index="{{ l.index }}"] .chatcontainer[data-index="{{ c.index }}"] { z-index: 0 !important; visibility: visible !important; }
+			{% endif %}
+			{% for c2 in c.overlapped_chats %}
+				#layoutwrapper[data-layout-index="{{ l.index }}"] .chatcontainer[data-index="{{ c.index }}"] .chatselector{{ c2.index }} { display: block; }
+			{% endfor %}
+		{% endfor %}
+	{% endfor %}
+{% endfor %}
+	</style>
+{% endblock styles %}
+{% block body %}
+	<div id="backgroundoverlay"></div>
+	<div id="sidebar">
+		<a class="edit sidebar-button" href="{{ edit_url }}" title="Edit Streams"></a>
+			<div class="layoutselectors">
+			{% for g in layout_groups %}
+				<div class="layoutgroup{% if layout_group.0.streams|length == g.0.streams|length %} current{% endif %}" data-streams="{{ g.0.streams|length }}">
+				{% for l in g %}
+					<div class="layoutselector" id="layoutselector{{ l.index }}" data-index="{{ l.index }}" onClick="select_layout({{ l.index }});return false;">
+						<div style="width:{{ l.scaled_tiny.max_x }}px;height:{{ l.scaled_tiny.max_y }}px;position:relative;">
+							{% for s in l.scaled_tiny.streams %}
+							<div class="streamthumb" style="position:absolute;width:{{ s.dim.x|add:-2 }}px;height:{{ s.dim.y|add:-2 }}px;left:{{ s.pos.x }}px;top:{{ s.pos.y }}px;text-align:center;line-height:{{ s.dim.y|add:-2 }}px;">{{ forloop.counter }}</div>
+							{% endfor %}
+							{% for c in l.scaled_tiny.chats %}
+							<div class="chatthumb" style="position:absolute;width:{{ c.dim.x|add:-2 }}px;height:{{ c.dim.y|add:-2 }}px;left:{{ c.pos.x }}px;top:{{ c.pos.y }}px;text-align:center;line-height:{{ c.dim.y|add:-2 }}px;">C</div>
+							{% endfor %}
+						</div>
+					</div>
+				{% endfor %}
+				</div>
+			{% endfor %}
+			</div>
+		<a class="logo" href="{{ base_url }}"></a>
+	</div>
+	<div id="contentwrapper" class="viewtemplate">
+		<div id="layoutwrapper">
+
+			{% for obj in layout_group.0.objects %}
+				{% include "object.html" %}
+			{% endfor %}
+			
+		</div>
+	</div>
+{% endblock %}
