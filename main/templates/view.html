@@ -19,6 +19,9 @@
 				#layoutwrapper[data-layout-index="{{ l.index }}"] .chatcontainer[data-index="{{ c.index }}"] .chatselector{{ c2.index }} { display: block; }
 			{% endfor %}
 		{% endfor %}
+		{% if l.streams|length == 1 %}
+			#layoutwrapper[data-layout-index="{{ l.index }}"] .hidden-when-one-stream {display: none;}
+		{% endif %}
 	{% endfor %}
 {% endfor %}
 	</style>

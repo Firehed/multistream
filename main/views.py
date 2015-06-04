@@ -65,10 +65,12 @@ class Layout(object):
 				stream.tag = stream_tag
 	def assign_indexes(self):
 		if len(self.chats) > 0:
+			self.has_chats = True
 			for i, stream, chat in zip(range(len(self.streams)), self.streams, self.chats):
 				stream.index = i
 				chat.index = i
 		else:
+			self.has_chats = False
 			for i, stream in zip(range(len(self.streams)), self.streams):
 				stream.index = i
 	def max_x(self):
