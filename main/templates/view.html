@@ -31,7 +31,7 @@
 			{% for g in layout_groups %}
 				<div class="layoutgroup{% if layout_group.0.streams|length == g.0.streams|length %} current{% endif %}" data-streams="{{ g.0.streams|length }}">
 				{% for l in g %}
-					<div class="layoutselector" id="layoutselector{{ l.index }}" data-index="{{ l.index }}" onClick="select_layout({{ l.index }});return false;">
+					<div class="layoutselector" id="layoutselector{{ l.index }}" data-index="{{ l.index }}">
 						<div style="width:{{ l.scaled_tiny.max_x }}px;height:{{ l.scaled_tiny.max_y }}px;position:relative;">
 							{% for s in l.scaled_tiny.streams %}
 							<div class="streamthumb" style="position:absolute;width:{{ s.dim.x|add:-2 }}px;height:{{ s.dim.y|add:-2 }}px;left:{{ s.pos.x }}px;top:{{ s.pos.y }}px;text-align:center;line-height:{{ s.dim.y|add:-2 }}px;">{{ forloop.counter }}</div>

@@ -25,15 +25,15 @@
 								<span class="streamname">{{ obj.tag }}</span>
 							</div>
 							<div class='mainbuttons'>
-								<button class='roundedleft audiobutton' onClick="choose_stream_audio('{{ obj.tag }}');return false;" title='Audio'><span class="audioicon"></span> Audio</button>
-								<button class='square bothbutton' onClick="choose_stream_both('{{ obj.tag }}');return false;" title='Both'><span class="bothicon"></span> Both</button>
-								<button class='roundedright chatbutton' onClick="choose_stream_chat('{{ obj.tag }}');return false;" title='Chat'><span class="chaticon"></span> Chat</button>
+								<button class='roundedleft audiobutton' data-tag='{{ obj.tag }}' title='Audio'><span class="audioicon"></span> Audio</button>
+								<button class='square bothbutton' data-tag='{{ obj.tag }}' title='Both'><span class="bothicon"></span> Both</button>
+								<button class='roundedright chatbutton' data-tag='{{ obj.tag }}' title='Chat'><span class="chaticon"></span> Chat</button>
 							
 							</div>
 							<div class='auxbuttons'>
 								<button class='profilebutton' onClick="window.open('http://twitch.tv/{{ obj.tag }}/profile', '_blank');" title='Profile'><span class="profileicon"></span> Profile &raquo;</button>
-								<button class='reloadstream' onClick="reload_stream('{{ obj.tag }}');" title='Reload'><span class="reloadicon"></span> Reload</button>
-								<button class='closebutton' onClick="close_stream_and_chat('{{ obj.tag }}');" title='Close'><span class="closeicon"></span> Close</button>
+								<button class='reloadstream' data-tag='{{ obj.tag }}' title='Reload'><span class="reloadicon"></span> Reload</button>
+								<button class='closebutton' data-tag='{{ obj.tag }}' title='Close'><span class="closeicon"></span> Close</button>
 							</div>
 						</div>
 					</div>
