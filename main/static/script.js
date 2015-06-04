@@ -63,7 +63,7 @@ $(document).ready( function() {
 			e.preventDefault();
 			choose_stream_audio($(this).attr('data-tag'));
 		});
-		$('.chatbutton[data-tag]').click(function(e) {
+		$('.chatbutton[data-tag],[class*=chatselector][data-tag]').click(function(e) {
 			e.preventDefault();
 			choose_stream_chat($(this).attr('data-tag'));
 		});

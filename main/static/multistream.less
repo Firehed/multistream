@@ -49,12 +49,31 @@ button,
 	transition: background-color 0.5s, color 0.5s, opacity 0.5s;
 }
 
+.rounded {
+	border-radius: 5px;
+}
+.squareright {
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.squareleft {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+.square {
+	border-radius: 0;
+}
+
 button, .button {
 	font-family: @defaultfont;
 	background: rgba(0, 0, 0, 0.1);
 	color: @black;
 	border: solid 1px @black;
-	border-radius: 5px;
+	.rounded;
 	font-weight: bold;
 	font-size: 18px;
 	cursor: pointer;
@@ -84,23 +103,12 @@ button, .button {
 		}
 	}
 
-	&.roundedleft {
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
-	}
-	&.roundedright {
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
-	}
-	&.square {
-		border-radius: 0;
-	}
-	
 	.streamoverlay & {
 		line-height: 20px;
 	}
 	
 }
+
 
 .tooltiponly {
 	.tooltip;
@@ -586,6 +594,18 @@ span.deleteicon {
 	.mainbuttons {
 		button {
 			.tooltiponly;
+			.square;
+			
+			&:first-child {
+				.squareright;
+			}
+			&:last-child {
+				.squareleft;
+			}
+			&:hover:after {
+				bottom: auto;
+				top:26px;
+			}
 		}
 	}
 
@@ -598,6 +618,11 @@ span.deleteicon {
 		button {
 			.tooltiponly;
 			display: block;
+			&:hover:after {
+				bottom: -3px;
+				left:auto;
+				right: 30px;
+			}
 		}
 	}
 

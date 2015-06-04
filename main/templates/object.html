@@ -19,15 +19,15 @@
 					</div>
 					<div class="streamoverlay{% if obj.index == 0 %} audio chat{% endif %}" data-tag="{{ obj.tag }}" data-index="{{ obj.index }}" data-object-type="stream">
 						<div class='audioicon'></div>
-						<div class='chaticon'></div>
+						<div class='chaticon hidden-when-no-chat'></div>
 						<div class='overlaypopup'>
 							<div class='overlaycaption'>
 								<span class="streamname">{{ obj.tag }}</span>
 							</div>
 							<div class='mainbuttons'>
-								<button class='roundedleft audiobutton hidden-when-one-stream' data-tag='{{ obj.tag }}' title='Audio'><span class="audioicon"></span> Audio</button>
-								<button class='square bothbutton hidden-when-one-stream' data-tag='{{ obj.tag }}' title='Both'><span class="bothicon"></span> Both</button>
-								<button class='roundedright chatbutton hidden-when-one-stream' data-tag='{{ obj.tag }}' title='Chat'><span class="chaticon"></span> Chat</button>
+								<button class='audiobutton hidden-when-one-stream' data-tag='{{ obj.tag }}' title='Audio'><span class="audioicon"></span> Audio</button>
+								<button class='bothbutton hidden-when-one-stream hidden-when-no-chat' data-tag='{{ obj.tag }}' title='Both'><span class="bothicon"></span> Both</button>
+								<button class='chatbutton hidden-when-one-stream hidden-when-no-chat' data-tag='{{ obj.tag }}' title='Chat'><span class="chaticon"></span> Chat</button>
 							
 							</div>
 							<div class='auxbuttons'>
@@ -51,7 +51,7 @@
 							<button class="reloadchat"><span class="reloadicon"></span> Reload</button>
 							<ol class='chatmenu'>
 							{% for obj2 in obj.overlapped_chats %}
-								<li class='chatselector{{ obj2.index }}' onClick="choose_stream_chat('{{ obj2.tag }}');return false;"><span class="chaticon"></span> <span class="streamname">{{ obj2.tag }}</span></li>
+								<li class='chatselector{{ obj2.index }}' data-tag='{{ obj2.tag }}'><span class="chaticon"></span> <span class="streamname">{{ obj2.tag }}</span></li>
 							{% endfor %}
 							</ol>
 						</div>

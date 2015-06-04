@@ -22,6 +22,10 @@
 		{% if l.streams|length == 1 %}
 			#layoutwrapper[data-layout-index="{{ l.index }}"] .hidden-when-one-stream {display: none;}
 		{% endif %}
+		{% if not l.has_chat %}
+			#layoutwrapper[data-layout-index="{{ l.index }}"] .hidden-when-no-chat {display: none;}
+			#layoutwrapper[data-layout-index="{{ l.index }}"] .streamoverlay .mainbuttons button {border-radius: 5px;}
+		{% endif %}
 	{% endfor %}
 {% endfor %}
 	</style>
