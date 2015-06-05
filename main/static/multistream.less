@@ -83,7 +83,7 @@ button, .button {
 	}
 	
 	.viewtemplate & {
-		background: rgba(255, 255, 255, 0.9);
+		background: rgba(255, 255, 255, 0.8);
 		border: none;
 		margin: 1px;
 		color: @black;
@@ -120,6 +120,7 @@ button, .button {
 }
 
 .tooltip {
+	/*
 	position: relative;
 	
 	&:hover:after{
@@ -135,6 +136,7 @@ button, .button {
 		z-index: 98;
 		width: 4em;
 	}
+	*/
 }
 
 span.deleteicon {
@@ -372,9 +374,9 @@ span.deleteicon {
 
 #popupoverlay {
 	position: fixed;
-	left: 0;
+	left: 60px;
 	top: 0;
-	width: 100%;
+	width: calc(100% - 60px);
 	height: 100%;
 	z-index: 99;
 	background: black;
@@ -414,6 +416,10 @@ span.deleteicon {
 			width: 12.5%;
 			height: 40px;
 		}
+	}
+	
+	.layoutselectors {
+		display: none;
 	}
 }
 
@@ -468,12 +474,12 @@ span.deleteicon {
 	text-align: center;
 	display: none;
 	
+	&.current {
+		display: block;
+	}
+	
 	#sidebar & {
 		margin-top: 0;
-		
-		&.current {
-			display: block;
-		}
 	}
 }
 
@@ -484,13 +490,19 @@ span.deleteicon {
 	border-radius: 5px;
 	vertical-align: middle;
 	
-	#sidebar & {
-		opacity: 0.5;
-		
-		&.current,
-		&.selected,
-		&:hover {
-			opacity: 1;
+	opacity: 0.5;
+			
+	&.current,
+	&:hover {
+		opacity: 1;
+	}
+	
+	#buildlayoutform & {
+		&:hover,
+		&.current {
+			background: rgba(0,0,0,0.1);
+			padding: 4px;
+			border: solid 1px rgba(0,0,0,0.3);
 		}
 	}
 	
@@ -499,16 +511,7 @@ span.deleteicon {
 		left: -9999px;
 	}
 	
-	&:hover,
-	&.selected {
-		background: rgba(0,0,0,0.1);
-		padding: 4px;
-		border: solid 1px rgba(0,0,0,0.3);
-	}
 	
-	&:hover {
-		background: rgba(0,0,0,0.2);
-	}
 }
 
 
@@ -578,6 +581,7 @@ span.deleteicon {
 
 
 .streamoverlay {
+	transition: top 0.5s, left 0.5s, height 0.5s, width 0.5s;
 	display: none;
 	position:absolute; 
 	z-index:10; 
@@ -592,6 +596,7 @@ span.deleteicon {
 	}
 	
 	.mainbuttons {
+		display: none;
 		button {
 			.tooltiponly;
 			.square;
@@ -610,6 +615,7 @@ span.deleteicon {
 	}
 
 	.auxbuttons {
+		display: none;
 		position: absolute;
 		right: 0.5em;
 		top: 0.5em;
@@ -627,6 +633,43 @@ span.deleteicon {
 	}
 
 }
+
+
+.overlaypopup {
+	height: 0;
+	padding: 0;
+	overflow: hidden;
+	transition: height 0.5s, padding 0.5s;
+	display: inline;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	text-align: center;
+	background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.7);
+	
+	.streamoverlay:hover &,
+	#layoutwrapper.dimmed & {
+		height: 3.5em;
+		padding: 1.5em 0 1.5em;
+	}
+	.streamoverlay:hover & {
+		.auxbuttons, .mainbuttons {
+			display: block;
+		}
+	}
+}
+
+.overlaycaption {
+	color: white;
+	font-size: 24px;
+}
+
+.streamname {
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
 
 .audioicon {
 	vertical-align: top;
@@ -738,31 +781,6 @@ span.deleteicon {
 }
 
 
-.overlaypopup {
-	display: none;
-	position: absolute;
-	left: 0%;
-	top: 50%;
-	width: 100%;
-	text-align: center;
-	background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.7);
-	padding: 1em 0 1.5em;
-	margin-top: -25px;
-	
-	.streamoverlay:hover & {
-		display: inline;
-	}
-}
-
-.overlaycaption {
-	color: white;
-	font-size: 24px;
-}
-
-.streamname {
-	font-weight: bold;
-	text-transform: uppercase;
-}
 
 .chatcaption {
 	position: absolute;

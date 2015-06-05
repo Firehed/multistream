@@ -16,12 +16,12 @@
 					{% for stream_index in num_streams %}
 					<div class=streamfieldcontainer><label for="s{{ forloop.counter0}}">Stream {{ stream_index|add:1 }}</label><input class="streamfield deletable" type="text" name="s{{ forloop.counter0}}" id="field{{ forloop.counter0 }}" {% if streams %}value="{{ streams.pop }}"{% endif %} /><span class="streamstatusicon"></span></div>
 					{% endfor %}
-					<div class='layoutgroup-container clearfix'>
+					<div class='layoutselectors clearfix'>
 					{% for layout_group in layout_groups %}
-					<div class="layoutgroup" id="layoutgroup-{{ forloop.counter }}">
+					<div class="layoutgroup" data-streams="{{ layout_group.0.streams|length }}">
 					{% for layout in layout_group %}
-					<div class="layoutselector" id="layoutselector-{{ layout.index }}" style="{% if not forloop.last %}margin-right:10px;{% endif %}margin-bottom:10px;">
-						<div style="text-align:center;margin-bottom:4px;margin-top:4px;"><input name="layout" value="{{ layout.index }}" type="radio" {% if not layout.index %}checked="checked"{% endif %}/></div>
+					<div class="layoutselector" data-index="{{ layout.index }}" style="{% if not forloop.last %}margin-right:10px;{% endif %}margin-bottom:10px;">
+						<div style="text-align:center;margin-bottom:4px;margin-top:4px;"><input name="layout" value="{{ layout.index }}" data-index="{{ layout.index }}" type="radio" {% if not layout.index %}checked="checked"{% endif %}/></div>
 						<div style="width:{{ layout.scaled_thumb.max_x }}px;height:{{ layout.scaled_thumb.max_y }}px;position:relative;">
 							{% for stream in layout.scaled_thumb.streams %}
 							<div class="streamthumb" style="position:absolute;width:{{ stream.dim.x|add:-2 }}px;height:{{ stream.dim.y|add:-2 }}px;left:{{ stream.pos.x }}px;top:{{ stream.pos.y }}px;text-align:center;line-height:{{ stream.dim.y|add:-2 }}px;">{{ forloop.counter }}</div>

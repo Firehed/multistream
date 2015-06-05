@@ -8,7 +8,7 @@ $(document).ready( function() {
 	var default_live_filter = "*";
 	var default_tag_filter = ".tag-kbmod";
 	var default_sort = "random";
-	var curr_layout = 0;
+	var num_streams = 0; //ugh, couldn't quite get rid of this
 	
 	/************************
 	 * Index page handlers
@@ -56,7 +56,7 @@ $(document).ready( function() {
 		}
 
 		$('.layoutselector[data-index]').click(function(e) {
-			select_layout($(this).attr('data-index'));
+			sync_layout($(this).attr('data-index'));
 		});
 		
 		$('.audiobutton[data-tag]').click(function(e) {
@@ -81,9 +81,9 @@ $(document).ready( function() {
 		});
 
 		//Pick a valid layout
-		curr_layout = document.location.href.match(/layout=?([0-9][0-9]?)/i);
-		if(curr_layout) curr_layout = parseInt(curr_layout[1], 10);
-		if(-1 == $.inArray(curr_layout, get_valid_layout_indexes()) ) select_layout(-1);
+		var url_layout = document.location.href.match(/layout=?([0-9][0-9]?)/i);
+		if(url_layout) url_layout = parseInt(url_layout[1], 10);
+		if(-1 == $.inArray(url_layout, get_valid_layout_indexes()) ) sync_layout(-1);
 	}
 	
 	
@@ -93,16 +93,23 @@ $(document).ready( function() {
 	 
 	function add_index_event_handlers($element) {
 	
+		$element.find('button[type="submit"]').click(function(e) {
+			if($('#sidebar').length) {
+				e.preventDefault();
+				$('#sidebar .edit.sidebar-button').click();
+			}
+		});
+	
 		$element.find('.streamfield').streamfield().keyup(function() {
-			update_layoutgroup_display();
+			sync_layout(-1);
 			update_selected_channels();
 		});
 			
 		setTimeout(function(){$element.find('.streamfield').filter(function(){return this.value==""}).first().focus();},100);
 
 
-		$element.find('.layoutselector').click( function() { 
-			select_layout_button( $(this).attr('id') ); 
+		$element.find('.layoutselector[data-index]').click( function() { 
+			sync_layout( $(this).attr('data-index') ); 
 		});
 		
 		
@@ -118,7 +125,7 @@ $(document).ready( function() {
 			} else {
 				remove_from_form_streams($(this).attr('rel'));
 			}
-			update_layoutgroup_display();
+			sync_layout(-1);
 		});
 
 
@@ -134,7 +141,7 @@ $(document).ready( function() {
 		$element.find('#clearbutton').click(function(e){
 			e.preventDefault();
 			$('.streamfield').each(function(){$.fn.streamfield.clear($(this).attr('id'))});
-			update_layoutgroup_display();
+			sync_layout(-1);
 			update_selected_channels();
 		});	
 
@@ -146,12 +153,11 @@ $(document).ready( function() {
 		
 
 		$element.find('.tabs').tabs();
-		update_layoutgroup_display();
+		sync_layout(-1);
 		
 		if(window.location.hash.substring(0,9) == "#featured")
 			setTimeout(function(){$('#featured-tab-selector a').click();}, 100);
 
-		if(curr_layout) select_layout_button("layoutselector-" + curr_layout);
 	}
 
 	function setup_isotope() {
@@ -187,7 +193,7 @@ $(document).ready( function() {
 						add_to_form_streams($(this).attr('rel'));
 					});
 					update_selected_channels();
-					update_layoutgroup_display();
+					sync_layout(-1);
 				},500);
 			});
 
@@ -210,7 +216,7 @@ $(document).ready( function() {
 			$('#live-filters button[data-filter-value="'+ default_live_filter +'"]').addClass('selected');
 			$('#sort-filters button[data-sort-value="'+ default_sort +'"]').addClass('selected');
 			update_selected_channels();
-			update_layoutgroup_display();
+			sync_layout(-1);
 			update_filters();
 		}
 	}
@@ -229,34 +235,6 @@ $(document).ready( function() {
 		$quickpicks.isotope({ filter: cfilter, sortBy: sort_filter });
 	}
 		
-	function update_layoutgroup_display() {
-		
-		if($('#buildlayoutform').length) {
-			num_form_streams = get_num_form_streams();
-			
-			$('.streamfieldcontainer').each( function() {
-				if ( $(this).index() < num_form_streams + 1 ) 
-					$(this).slideDown();
-				else
-					$(this).slideUp();
-			});
-			
-			if(num_form_streams == 0)
-				$('#submitbuttoncontainer').slideUp();
-			else
-				$('#submitbuttoncontainer').slideDown();
-			
-			$('#buildlayoutform #layoutgroup-' + num_form_streams).slideDown();
-			$('#buildlayoutform .layoutgroup:not(#layoutgroup-' + num_form_streams + ')').slideUp();	
-			
-			select_layout_button( $('#buildlayoutform #layoutgroup-' + num_form_streams).find('.layoutselector:first').attr('id') );
-		}
-		
-		if($('.layoutselectors').length) {
-			$('.layoutselectors .layoutgroup[data-streams="' + get_num_visible_streams() + '"]').addClass('current').siblings().removeClass('current');
-		}
-
-	}
 
 	function reindex_objects() {
 		var object_classes = ['streamcontainer', 'streamoverlay', 'chatcontainer'];
@@ -269,14 +247,6 @@ $(document).ready( function() {
 		}
 	}
 
-	function select_layout_button( layout_cssid ) {
-		var layout_selector = $('#' + layout_cssid );
-		
-		layout_selector.siblings().find('input[name=layout]:checked').removeAttr('checked');
-		layout_selector.find('input[name=layout]').attr('checked','checked');
-		layout_selector.siblings().not(this).removeClass('selected');
-		layout_selector.addClass('selected');
-	}
 
 	function add_to_form_streams(streamname) {
 		if($('.streamfield').filter(function(){return this.value==streamname}).length == 0) {
@@ -353,26 +323,73 @@ $(document).ready( function() {
 		$('.chatmenu').hide();
 	}
 
-	function select_layout(index) {
-		//index == -1 means auto-select a valid layout
-		if (index == -1) {
-			index = get_first_valid_layout_index();
-		}
+	function sync_layout(index) {
 		
-		$('.layoutselector[data-index="' + index + '"]').addClass('current');
-		$('.layoutselector:not([data-index="' + index + '"])').removeClass('current');
+		old_num_streams = num_streams;
+		num_streams = get_num_streams();
+		console.debug(num_streams);
+		
+		if(index != -1 || num_streams != old_num_streams) {
+		
+			//index == -1 means auto-select a valid layout
+			if (index == -1) {
+				index = get_first_valid_layout_index(num_streams);
+			}
+			
+			//Select the correct sidebar and form button and unselect the others
+			$('.layoutselector[data-index="' + index + '"]').addClass('current');
+			$('.layoutselector:not([data-index="' + index + '"])').removeClass('current');
+			$('input[name=layout][data-index="' + index + '"]').attr('checked','checked');
+			$('input[name=layout]:not([data-index="' + index + '"])').removeAttr('checked');
+			
+			//Change the layout wrapper's class
+			$('#layoutwrapper').attr('data-layout-index', index);
+
+			//Change the visible layoutgroup
+			$('.layoutselectors .layoutgroup[data-streams="' + num_streams + '"]').addClass('current');
+			$('.layoutselectors .layoutgroup:not([data-streams="' + num_streams + '"])').removeClass('current');
+			
+			if($('#layoutwrapper').length) {
+				//Change the URL
+				old_url = getLocation().pathname;
 				
-		$('#layoutwrapper').attr('data-layout-index', index);
-		
-		old_url = getLocation().pathname;
-		
-		if(old_url.indexOf('layout') !== -1) {
-			new_url = old_url.replace(/\/layout=?[0-9][0-9]?/i, '/layout' + index);
-		} else {
-			new_url = old_url + "layout" + index + "/";
+				if(old_url.indexOf('layout') !== -1) {
+					if(index === undefined) {
+						new_url = old_url.replace(/\/layout=?[0-9][0-9]?/i, '');
+					} else {
+						new_url = old_url.replace(/\/layout=?[0-9][0-9]?/i, '/layout' + index);
+					}
+				} else {
+					if(index === undefined) {
+						new_url = old_url;
+					} else {
+						new_url = old_url + "layout" + index + "/";
+					}
+				}
+				
+				history.replaceState({}, "Layout " + index, new_url);
+			}
+			
 		}
 		
-		history.replaceState({}, "Layout " + index, new_url);
+		if($('#buildlayoutform').length) {
+						
+			//Hide / show form fields based on how many streams there are
+			$('.streamfieldcontainer').each( function() {
+				if ( $(this).index() < num_streams + 1 ) 
+					$(this).slideDown();
+				else
+					$(this).slideUp();
+			});
+			
+			//Hide submit button if there are no streams
+			if(num_streams == 0)
+				$('#submitbuttoncontainer').slideUp();
+			else
+				$('#submitbuttoncontainer').slideDown();
+			
+		}
+		
 	}
 
 	function getLocation() {
@@ -396,20 +413,18 @@ $(document).ready( function() {
 		new_edit_url = $('a.edit.sidebar-button').attr('href').replace(new RegExp("\/" + tag, "i"), '');
 		$('a.edit.sidebar-button').attr('href', new_edit_url);
 		
-		update_layoutgroup_display();
-		select_layout(-1); //auto-select
+		sync_layout(-1); //auto-select
 		
 		if (reset_chat) choose_stream_chat(-1);
 		if (reset_audio) choose_stream_audio(-1);
 	}
-
-
-	function get_num_form_streams() {
-		return $('.streamfield[value!=""]').length;
-	}
-
-	function get_num_visible_streams() {
-		return $('.streamcontainer').length;
+	
+	function get_num_streams() {
+		if($('.streamfield').length) {
+			return $('.streamfield[value!=""]').length;
+		} else {
+			return $('.streamcontainer').length;
+		}
 	}
 
 	function get_first_valid_layout_index(num_streams=null,chat=null) {
@@ -418,7 +433,7 @@ $(document).ready( function() {
 
 	function get_valid_layout_indexes(num_streams=null,chat=null) {
 		if(num_streams === null)
-			num_streams = get_num_visible_streams();
+			num_streams = get_num_streams();
 		
 		if(num_streams === 0)
 			return 0;
@@ -427,10 +442,14 @@ $(document).ready( function() {
 	}
 
 	function get_current_chat() {
-		return $('.streamcontainer.chat').attr('data-tag');
+		return $('.streamcontainer.chat').first().attr('data-tag');
 	}
 
 	function get_current_audio() {
-		return $('.streamcontainer.audio').attr('data-tag');
+		return $('.streamcontainer.audio').first().attr('data-tag');
+	}
+	
+	function get_current_layout() {
+		return $('.layoutselectors .layoutselector.current').first().attr('data-index');
 	}
 });
