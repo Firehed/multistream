@@ -151,8 +151,8 @@ STREAM_LAYOUTS = [
 	]),
 	# 5 Streams
 	Layout([
-		Stream((37,65),(0,0)), Stream((38,65),(37,0)), Chat((25,65),(75,0)),
-		Stream((33,35),(0,65)), Stream((34,35),(33,65)), Stream((33,35),(67,65)),
+		Stream((37,60),(0,0)), Stream((38,60),(37,0)), Chat((25,60),(75,0)),
+		Stream((33,40),(0,60)), Stream((34,40),(33,60)), Stream((33,40),(67,60)),
 	]),
 	Layout([
 		Stream((33,50),(0,0)), Stream((34,50),(33,0)), Stream((33,50),(67,0)),
@@ -222,9 +222,14 @@ def index(request, streams_url=''):
 					has_blanks = True
 				else:
 					streams.append(stag)
+					
+	if len(streams)!=len(set(streams)):
+		has_duplicates = True
+	else:
+		has_duplicates = False
 
-	if streams and old_url_format:
-		return HttpResponseRedirect('/' + settings.URL_INFIX + 'edit/%s' % ('/'.join(streams).lower()))
+	if (streams and old_url_format) or has_duplicates:
+		return HttpResponseRedirect('/' + settings.URL_INFIX + 'edit/%s' % ('/'.join(remove_duplicates(streams)).lower()))
 
 	#since we're using 'pop' in the template
 	if streams:
@@ -273,11 +278,16 @@ def view_streams(request, streams_url=''):
 					
 		if layout_index == '':
 			layout_index = default_layout(len(streams))
+			
+	if len(streams)!=len(set(streams)):
+		has_duplicates = True
+	else:
+		has_duplicates = False
 
 	if not streams:
 		return HttpResponseRedirect('/' + settings.URL_INFIX)
-	if has_blanks or old_url_format:
-		return HttpResponseRedirect('/' + settings.URL_INFIX + '%s/layout%s/' % ('/'.join(streams).lower(), layout_index))
+	if has_blanks or old_url_format or has_duplicates:
+		return HttpResponseRedirect('/' + settings.URL_INFIX + '%s/layout%s/' % ('/'.join(remove_duplicates(streams)).lower(), layout_index))
 		
 	if len(streams) > MAX_STREAMS:
 		num_streams = MAX_STREAMS
@@ -384,6 +394,9 @@ def get_object(request):
 	obj_type = request.GET.get('type',None)
 	obj_tag = request.GET.get('tag',None)
 	obj_index = int(request.GET.get('index',-1))
+	obj_active = request.GET.get('active','true')
+	if obj_active != 'true':
+		obj_active = 'false'
 	
 	if (obj_type == 'stream' or obj_type == 'chat') and obj_index >= 0 and obj_tag != '':
 		t = loader.get_template('object.html')
@@ -393,6 +406,7 @@ def get_object(request):
 				'objtype' : obj_type,
 				'index' : obj_index,
 				'tag' : obj_tag,
+				'active' : obj_active,
 				'use_live_embeds' : settings.USE_LIVE_EMBEDS,
 				'use_flash_player' : settings.USE_FLASH_PLAYER,
 			},
@@ -421,3 +435,9 @@ def layout_from_url(streams_url):
 
 def default_layout(stream_count=1):
 	return LAYOUT_GROUPS[stream_count - 1][0].index
+	
+
+def remove_duplicates(seq):
+	seen = set()
+	seen_add = seen.add
+	return [ x for x in seq if not (x in seen or seen_add(x))]

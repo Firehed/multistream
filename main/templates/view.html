@@ -16,7 +16,7 @@
 				#layoutwrapper[data-layout-index="{{ l.index }}"] .chatcontainer[data-index="{{ c.index }}"] { z-index: 0 !important; visibility: visible !important; }
 			{% endif %}
 			{% for c2 in c.overlapped_chats %}
-				#layoutwrapper[data-layout-index="{{ l.index }}"] .chatcontainer[data-index="{{ c.index }}"] .chatselector{{ c2.index }} { display: block; }
+				#layoutwrapper[data-layout-index="{{ l.index }}"] .chatcontainer[data-index="{{ c.index }}"] .chatselector[data-index="{{ c2.index }}"] { display: block; }
 			{% endfor %}
 		{% endfor %}
 		{% if l.streams|length == 1 %}
@@ -58,7 +58,7 @@
 		<div id="layoutwrapper">
 
 			{% for obj in layout_group.0.objects %}
-				{% include "object.html" %}
+				{% include "object.html" with active='true' %}
 			{% endfor %}
 			
 		</div>

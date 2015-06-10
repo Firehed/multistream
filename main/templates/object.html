@@ -51,7 +51,7 @@
 							<button class="reloadchat"><span class="reloadicon"></span> Reload</button>
 							<ol class='chatmenu'>
 							{% for obj2 in obj.overlapped_chats %}
-								<li class='chatselector{{ obj2.index }}' data-tag='{{ obj2.tag }}'><span class="chaticon"></span> <span class="streamname">{{ obj2.tag }}</span></li>
+								<li class='chatselector' data-index='{{ obj2.index }}' data-tag='{{ obj2.tag }}'><span class="chaticon"></span> <span class="streamname">{{ obj2.tag }}</span></li>
 							{% endfor %}
 							</ol>
 						</div>

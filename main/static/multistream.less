@@ -316,6 +316,9 @@ span.deleteicon {
 		margin: 10px 45px 20px;
 		display: none;
 	}
+	#cancelbutton {
+		display: none;
+	}
 }
 
 #submitbuttoncontainer {
@@ -329,6 +332,7 @@ span.deleteicon {
 
 .streamfieldcontainer {
 	text-align: center;
+	padding-left: 54px;
 }
 
 .formcaption {
@@ -421,6 +425,9 @@ span.deleteicon {
 	.layoutselectors {
 		display: none;
 	}
+	
+	#clearbutton { display: none; }
+	#cancelbutton { display: inline-block; }
 }
 
 
@@ -588,8 +595,8 @@ span.deleteicon {
 	
 	& > .audioicon,
 	& > .chaticon {
-		float: right;
-		clear: right;
+		float: left;
+		clear: left;
 		padding: 4px 8px;
 		display: none;
 		opacity: 0.4;
@@ -639,7 +646,7 @@ span.deleteicon {
 	height: 0;
 	padding: 0;
 	overflow: hidden;
-	transition: height 0.5s, padding 0.5s;
+	transition: height 0.3s, padding 0.3s;
 	display: inline;
 	position: absolute;
 	left: 0;

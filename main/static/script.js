@@ -21,20 +21,14 @@ $(document).ready( function() {
 	 */
 	if($('#layoutwrapper').length) {
 		
-		$('button.reload').click( function() {
-			$(this).parents('.chatcontainer').find('iframe').attr( 'src', function ( i, val ) { return val; });
-		});
-		$('.chatmenuopener').click( function() {
-			$(this).siblings('.chatmenu').slideToggle(150);
-		});
-		
+		//Sidebar clicks
 		$('.edit.sidebar-button').click( function(e) {
 			e.preventDefault();
 			
 			if($('#popupform').length) {
 				$('#layoutwrapper').removeClass('dimmed');
 				$(this).removeClass('selected');
-				$('#popupform').fadeOut(function(){$(this).remove();});
+				$('#popupform').fadeOut(function(){$(this).remove();sync_layout(-1);});
 				$('#popupoverlay').fadeOut(function(){$(this).remove();});
 			} else {
 				$('#layoutwrapper').addClass('dimmed');
@@ -48,42 +42,32 @@ $(document).ready( function() {
 				}).insertAfter($(this));
 			}
 		});
+		
+		$('.layoutselector[data-index]').click(function(e) {
+			sync_layout($(this).attr('data-index'));
+		});
+		
+		
+		//In-object clicks
+		add_object_event_handlers($('.streamoverlay,.chatcontainer'));
 
+
+		//On-First-Load stuff
+		
+		//Pick the first stream's audio after a brief delay to let flash load
 		if($('.streamcontainer[data-index="0"]').length) {
 			setTimeout(function(){
 				choose_stream_audio(-1);
 			},3000);
 		}
 
-		$('.layoutselector[data-index]').click(function(e) {
-			sync_layout($(this).attr('data-index'));
-		});
-		
-		$('.audiobutton[data-tag]').click(function(e) {
-			e.preventDefault();
-			choose_stream_audio($(this).attr('data-tag'));
-		});
-		$('.chatbutton[data-tag],[class*=chatselector][data-tag]').click(function(e) {
-			e.preventDefault();
-			choose_stream_chat($(this).attr('data-tag'));
-		});
-		$('.bothbutton[data-tag]').click(function(e) {
-			e.preventDefault();
-			choose_stream_both($(this).attr('data-tag'));
-		});
-		$('.closebutton[data-tag]').click(function(e) {
-			e.preventDefault();
-			close_stream_and_chat($(this).attr('data-tag')); 
-		});
-		$('.reloadstream[data-tag]').click(function(e) {
-			e.preventDefault();
-			reload_stream($(this).attr('data-tag')); 
-		});
-
-		//Pick a valid layout
+		//Pick a valid layout if one wasn't provided from the url
 		var url_layout = document.location.href.match(/layout=?([0-9][0-9]?)/i);
-		if(url_layout) url_layout = parseInt(url_layout[1], 10);
-		if(-1 == $.inArray(url_layout, get_valid_layout_indexes()) ) sync_layout(-1);
+		if(url_layout) url_layout = url_layout[1];
+		if(-1 == $.inArray(url_layout, get_valid_layout_indexes()) )
+			sync_layout(-1);
+		else
+			sync_layout(url_layout);
 	}
 	
 	
@@ -96,10 +80,18 @@ $(document).ready( function() {
 		$element.find('button[type="submit"]').click(function(e) {
 			if($('#sidebar').length) {
 				e.preventDefault();
+				sync_objects();
 				$('#sidebar .edit.sidebar-button').click();
 			}
 		});
-	
+		
+		$element.find('#cancelbutton').click(function(e) {
+			if($('#sidebar').length) {
+				e.preventDefault();
+				$('#sidebar .edit.sidebar-button').click();
+			}
+		});
+		
 		$element.find('.streamfield').streamfield().keyup(function() {
 			sync_layout(-1);
 			update_selected_channels();
@@ -158,6 +150,35 @@ $(document).ready( function() {
 		if(window.location.hash.substring(0,9) == "#featured")
 			setTimeout(function(){$('#featured-tab-selector a').click();}, 100);
 
+	}
+	
+	function add_object_event_handlers($element) {
+		$element.find('button.reloadchat').click( function() {
+			$(this).parents('.chatcontainer').find('iframe').attr( 'src', function ( i, val ) { return val; });
+		});
+		$element.find('.chatmenuopener').click( function() {
+			$(this).siblings('.chatmenu').slideToggle(150);
+		});
+		$element.find('.audiobutton[data-tag]').click(function(e) {
+			e.preventDefault();
+			choose_stream_audio($(this).attr('data-tag'));
+		});
+		$element.find('.chatbutton[data-tag],[class*=chatselector][data-tag]').click(function(e) {
+			e.preventDefault();
+			choose_stream_chat($(this).attr('data-tag'));
+		});
+		$element.find('.bothbutton[data-tag]').click(function(e) {
+			e.preventDefault();
+			choose_stream_both($(this).attr('data-tag'));
+		});
+		$element.find('.closebutton[data-tag]').click(function(e) {
+			e.preventDefault();
+			close_stream_and_chat($(this).attr('data-tag')); 
+		});
+		$element.find('.reloadstream[data-tag]').click(function(e) {
+			e.preventDefault();
+			reload_stream($(this).attr('data-tag')); 
+		});
 	}
 
 	function setup_isotope() {
@@ -283,7 +304,7 @@ $(document).ready( function() {
 
 	function choose_stream_audio(tag) {
 		if(tag == -1) { // -1 = force auto-selection of first available stream
-			tag = $('.streamcontainer[data-index="0"]').attr('data-tag');
+			tag = $('.streamcontainer[data-index]:first').attr('data-tag');
 		}
 		
 		var $new_str = $('.streamcontainer[data-tag="' + tag + '"]');
@@ -308,7 +329,7 @@ $(document).ready( function() {
 
 	function choose_stream_chat(tag) {
 		if(tag == -1) { // -1 = force auto-selection of first available stream
-			tag = $('.streamcontainer[data-index="0"]').attr('data-tag');
+			tag = $('.streamcontainer[data-index]:first').attr('data-tag');
 		}
 		
 		$('.chatcontainer[data-tag="' + tag + '"]').addClass('current');
@@ -325,10 +346,11 @@ $(document).ready( function() {
 
 	function sync_layout(index) {
 		
+		//console.debug(index);
+		
 		old_num_streams = num_streams;
 		num_streams = get_num_streams();
-		console.debug(num_streams);
-		
+				
 		if(index != -1 || num_streams != old_num_streams) {
 		
 			//index == -1 means auto-select a valid layout
@@ -387,9 +409,31 @@ $(document).ready( function() {
 				$('#submitbuttoncontainer').slideUp();
 			else
 				$('#submitbuttoncontainer').slideDown();
-			
+
 		}
 		
+		
+		
+	}
+	
+	function sync_objects() {
+		var form_streams = [];
+		$('#buildlayoutform .streamfield').each(function() {
+			var value = $(this).val();
+			if(value) form_streams.push(value);
+		});
+		var current_streams = [];
+		$('.streamcontainer').each(function() {
+			current_streams.push($(this).attr('data-tag'));
+		});
+		var add_streams = $(form_streams).not(current_streams).get();
+		var remove_streams = $(current_streams).not(form_streams).get();
+		
+		console.debug(add_streams);
+		console.debug(remove_streams);
+		
+		close_stream_and_chat(remove_streams);
+		add_stream_and_chat(add_streams);
 	}
 
 	function getLocation() {
@@ -399,31 +443,86 @@ $(document).ready( function() {
 	};
 
 
-	function close_stream_and_chat(tag) {
-		var reset_chat = (tag == get_current_chat());
-		var reset_audio = (tag == get_current_audio());
+	function close_stream_and_chat(tags) {
+		if(!$.isArray(tags)) tags = [tags];
 		
-		$('[data-object-type="stream"][data-tag="' + tag + '"]').remove();
-		$('[data-object-type="chat"][data-tag="' + tag + '"]').remove();
+		for (var i = 0; i < tags.length; i++) {
+			var reset_chat = (tags[i] == get_current_chat());
+			var reset_audio = (tags[i] == get_current_audio());
+			
+			$('[data-object-type="stream"][data-tag="' + tags[i] + '"]').remove();
+			$('[data-object-type="chat"][data-tag="' + tags[i] + '"]').remove();
+			$('.chatselector[data-tag="' + tags[i] + '"]').remove();
+			
+			
+			new_url = getLocation().pathname.replace(new RegExp("\/" + tags[i], "i"), '');
+			history.replaceState({}, "", new_url);
+			
+			new_edit_url = $('a.edit.sidebar-button').attr('href').replace(new RegExp("\/" + tags[i], "i"), '');
+			$('a.edit.sidebar-button').attr('href', new_edit_url);
+			
+			if (reset_chat) choose_stream_chat(-1);
+			if (reset_audio) choose_stream_audio(-1);
+		}
+		
 		reindex_objects();
-
-		new_url = getLocation().pathname.replace(new RegExp("\/" + tag, "i"), '');
-		history.replaceState({}, "", new_url);
+		sync_layout(-1); //auto-select
+	}
+	
+	function add_stream_and_chat(tags) {
+		if(ajax_url === undefined) return;
 		
-		new_edit_url = $('a.edit.sidebar-button').attr('href').replace(new RegExp("\/" + tag, "i"), '');
-		$('a.edit.sidebar-button').attr('href', new_edit_url);
+		if(!$.isArray(tags)) tags = [tags];
+		
+		index = parseInt($('.streamcontainer:last').attr('data-index')) + 1;
+				
+		for (var i = 0; i < tags.length; i++) {
+			
+			$.get(ajax_url + "?action=getobject&type=stream&tag=" + tags[i] + "&index=" + (index + i), function(data){
+				$('.streamoverlay:last').after(data);
+				add_object_event_handlers($('.streamoverlay:last'));
+			});
+			
+			$.get(ajax_url + "?action=getobject&type=chat&tag=" + tags[i] + "&index=" + (index + i), function(data){
+				$('.chatcontainer:last').after(data);
+				add_object_event_handlers($('.chatcontainer:last'));
+			});
+			
+			$("<li class='chatselector' data-index='" + (index + i) + "' data-tag='" + tags[i] + "'><span class='chaticon'></span> <span class='streamname'>" + tags[i] + "</span></li>")
+				.appendTo($('.chatmenu'))
+				.click(function(e){
+					e.preventDefault();
+					choose_stream_chat($(this).attr('data-tag'));
+				});
+			
+			old_url = getLocation().pathname;
+			matches = old_url.match(new RegExp("(.*)(\/layout[0-9][0-9]?.*)", "i"));
+			if(matches) {
+				new_url = matches[1] + "/" + tags[i] + matches[2];
+			} else {
+				new_url = old_url + "/" + tags[i];
+			}
+			history.replaceState({}, "", new_url);
+			
+			old_edit_url = $('a.edit.sidebar-button').attr('href');
+			matches = old_edit_url.match(new RegExp("(.*)(\/layout[0-9][0-9]?.*)", "i"));
+			if(matches) {
+				new_edit_url = matches[1] + "/" + tags[i] + matches[2];
+			} else {
+				new_edit_url = old_edit_url + "/" + tags[i];
+			}
+			$('a.edit.sidebar-button').attr('href', new_edit_url);
+
+		}
 		
 		sync_layout(-1); //auto-select
-		
-		if (reset_chat) choose_stream_chat(-1);
-		if (reset_audio) choose_stream_audio(-1);
 	}
 	
 	function get_num_streams() {
 		if($('.streamfield').length) {
 			return $('.streamfield[value!=""]').length;
 		} else {
-			return $('.streamcontainer').length;
+			return $('.streamcontainer[data-tag!=""]').length;
 		}
 	}
 

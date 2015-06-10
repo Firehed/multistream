@@ -14,7 +14,7 @@
 				</ul>
 				<div id="custom">
 					{% for stream_index in num_streams %}
-					<div class=streamfieldcontainer><label for="s{{ forloop.counter0}}">Stream {{ stream_index|add:1 }}</label><input class="streamfield deletable" type="text" name="s{{ forloop.counter0}}" id="field{{ forloop.counter0 }}" {% if streams %}value="{{ streams.pop }}"{% endif %} /><span class="streamstatusicon"></span></div>
+					<div class=streamfieldcontainer><!--label for="s{{ forloop.counter0}}">Stream {{ stream_index|add:1 }}</label--><input placeholder="Stream {{ stream_index|add:1 }}" class="streamfield deletable" type="text" name="s{{ forloop.counter0}}" id="field{{ forloop.counter0 }}" {% if streams %}value="{{ streams.pop }}"{% endif %} /><span class="streamstatusicon"></span></div>
 					{% endfor %}
 					<div class='layoutselectors clearfix'>
 					{% for layout_group in layout_groups %}
@@ -68,7 +68,7 @@
 					</div>
 				</div>
 			</div>
-		<div id="submitbuttoncontainer" class='clearfix'><button id='clearbutton'>Clear</button><button type="submit" value="Watch Streams">Watch Streams</button></div>
+		<div id="submitbuttoncontainer" class='clearfix'><button id='clearbutton'>Clear</button><button id='cancelbutton'>Cancel</button><button type="submit" value="Watch Streams">Watch Streams</button></div>
 		<div style="clear:both;"></div>
 		<ul id="menu-primary-menu" class="menu">
 			<li><em>More from KBMOD:</em></li>
