@@ -258,12 +258,16 @@ $(document).ready( function() {
 		
 
 	function reindex_objects() {
-		var object_classes = ['streamcontainer', 'streamoverlay', 'chatcontainer'];
+		var object_classes = ['streamcontainer', 'streamoverlay', 'chatcontainer', 'chatselector'];
 		
 		for(class_i in object_classes) {
 			$objects = $('.' + object_classes[class_i]);
 			$objects.each(function() {
-				$(this).attr('data-index', $objects.index($(this)));
+				if($(this).hasClass('chatselector')) {
+					$(this).attr('data-index', $(this).index());
+				} else {
+					$(this).attr('data-index', $objects.index($(this)));
+				}
 			});
 		}
 	}

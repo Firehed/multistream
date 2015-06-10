@@ -386,9 +386,9 @@ def get_object(request,obj_type=None,obj_tag=None,obj_index=-1):
 				'objtype' : obj_type,
 				'index' : obj_index,
 				'tag' : obj_tag,
-				'use_live_embeds' : settings.USE_LIVE_EMBEDS,
-				'use_flash_player' : settings.USE_FLASH_PLAYER,
 			},
+			'use_live_embeds' : settings.USE_LIVE_EMBEDS,
+			'use_flash_player' : settings.USE_FLASH_PLAYER,
 		})
 		return HttpResponse(t.render(c))
 		
