@@ -28,7 +28,7 @@ $(document).ready( function() {
 			if($('#popupform').length) {
 				$('#layoutwrapper').removeClass('dimmed');
 				$(this).removeClass('selected');
-				$('#popupform').fadeOut(function(){$(this).remove();sync_layout(-1);});
+				$('#popupform').fadeOut(function(){$(this).remove();sync_layout();});
 				$('#popupoverlay').fadeOut(function(){$(this).remove();});
 			} else {
 				$('#layoutwrapper').addClass('dimmed');
@@ -57,7 +57,7 @@ $(document).ready( function() {
 		//Pick the first stream's audio after a brief delay to let flash load
 		if($('.streamcontainer[data-index="0"]').length) {
 			setTimeout(function(){
-				choose_stream_audio(-1);
+				choose_stream_audio();
 			},3000);
 		}
 
@@ -65,7 +65,7 @@ $(document).ready( function() {
 		var url_layout = document.location.href.match(/layout=?([0-9][0-9]?)/i);
 		if(url_layout) url_layout = url_layout[1];
 		if(-1 == $.inArray(url_layout, get_valid_layout_indexes()) )
-			sync_layout(-1);
+			sync_layout();
 		else
 			sync_layout(url_layout);
 	}
@@ -93,7 +93,7 @@ $(document).ready( function() {
 		});
 		
 		$element.find('.streamfield').streamfield().keyup(function() {
-			sync_layout(-1);
+			sync_layout();
 			update_selected_channels();
 		});
 			
@@ -117,7 +117,7 @@ $(document).ready( function() {
 			} else {
 				remove_from_form_streams($(this).attr('rel'));
 			}
-			sync_layout(-1);
+			sync_layout();
 		});
 
 
@@ -133,7 +133,7 @@ $(document).ready( function() {
 		$element.find('#clearbutton').click(function(e){
 			e.preventDefault();
 			$('.streamfield').each(function(){$.fn.streamfield.clear($(this).attr('id'))});
-			sync_layout(-1);
+			sync_layout();
 			update_selected_channels();
 		});	
 
@@ -145,7 +145,7 @@ $(document).ready( function() {
 		
 
 		$element.find('.tabs').tabs();
-		sync_layout(-1);
+		sync_layout();
 		
 		if(window.location.hash.substring(0,9) == "#featured")
 			setTimeout(function(){$('#featured-tab-selector a').click();}, 100);
@@ -214,7 +214,7 @@ $(document).ready( function() {
 						add_to_form_streams($(this).attr('rel'));
 					});
 					update_selected_channels();
-					sync_layout(-1);
+					sync_layout();
 				},500);
 			});
 
@@ -237,7 +237,7 @@ $(document).ready( function() {
 			$('#live-filters button[data-filter-value="'+ default_live_filter +'"]').addClass('selected');
 			$('#sort-filters button[data-sort-value="'+ default_sort +'"]').addClass('selected');
 			update_selected_channels();
-			sync_layout(-1);
+			sync_layout();
 			update_filters();
 		}
 	}
@@ -301,12 +301,12 @@ $(document).ready( function() {
 	}
 
 
-	function choose_stream_both(tag) {
+	function choose_stream_both(tag = -1) {
 		choose_stream_chat(tag);
 		choose_stream_audio(tag);
 	}
 
-	function choose_stream_audio(tag) {
+	function choose_stream_audio(tag = -1) {
 		if(tag == -1) { // -1 = force auto-selection of first available stream
 			tag = $('.streamcontainer[data-index]:first').attr('data-tag');
 		}
@@ -331,7 +331,7 @@ $(document).ready( function() {
 		});
 	}
 
-	function choose_stream_chat(tag) {
+	function choose_stream_chat(tag = -1) {
 		if(tag == -1) { // -1 = force auto-selection of first available stream
 			tag = $('.streamcontainer[data-index]:first').attr('data-tag');
 		}
@@ -348,7 +348,7 @@ $(document).ready( function() {
 		$('.chatmenu').hide();
 	}
 
-	function sync_layout(index) {
+	function sync_layout(index = -1) {
 		
 		//console.debug(index);
 		
@@ -361,6 +361,8 @@ $(document).ready( function() {
 			if (index == -1) {
 				index = get_first_valid_layout_index(num_streams);
 			}
+			
+			if(typeof index === 'undefined') index = '';
 			
 			//Select the correct sidebar and form button and unselect the others
 			$('.layoutselector[data-index="' + index + '"]').addClass('current');
@@ -380,13 +382,13 @@ $(document).ready( function() {
 				old_url = getLocation().pathname;
 				
 				if(old_url.indexOf('layout') !== -1) {
-					if(index === undefined) {
+					if(index === undefined || index == '') {
 						new_url = old_url.replace(/\/layout=?[0-9][0-9]?/i, '');
 					} else {
 						new_url = old_url.replace(/\/layout=?[0-9][0-9]?/i, '/layout' + index);
 					}
 				} else {
-					if(index === undefined) {
+					if(index === undefined || index == '') {
 						new_url = old_url;
 					} else {
 						new_url = old_url + "layout" + index + "/";
@@ -396,6 +398,14 @@ $(document).ready( function() {
 				history.replaceState({}, "Layout " + index, new_url);
 			}
 			
+		}
+		
+		if(typeof get_current_chat() === "undefined") {
+			choose_stream_chat();
+		}
+		
+		if(typeof get_current_audio() === "undefined") {
+			choose_stream_audio();
 		}
 		
 		if($('#buildlayoutform').length) {
@@ -433,8 +443,8 @@ $(document).ready( function() {
 		var add_streams = $(form_streams).not(current_streams).get();
 		var remove_streams = $(current_streams).not(form_streams).get();
 		
-		console.debug(add_streams);
-		console.debug(remove_streams);
+		//console.debug(add_streams);
+		//console.debug(remove_streams);
 		
 		close_stream_and_chat(remove_streams);
 		add_stream_and_chat(add_streams);
@@ -451,8 +461,6 @@ $(document).ready( function() {
 		if(!$.isArray(tags)) tags = [tags];
 		
 		for (var i = 0; i < tags.length; i++) {
-			var reset_chat = (tags[i] == get_current_chat());
-			var reset_audio = (tags[i] == get_current_audio());
 			
 			$('[data-object-type="stream"][data-tag="' + tags[i] + '"]').remove();
 			$('[data-object-type="chat"][data-tag="' + tags[i] + '"]').remove();
@@ -465,12 +473,10 @@ $(document).ready( function() {
 			new_edit_url = $('a.edit.sidebar-button').attr('href').replace(new RegExp("\/" + tags[i], "i"), '');
 			$('a.edit.sidebar-button').attr('href', new_edit_url);
 			
-			if (reset_chat) choose_stream_chat(-1);
-			if (reset_audio) choose_stream_audio(-1);
 		}
 		
 		reindex_objects();
-		sync_layout(-1); //auto-select
+		sync_layout(); //auto-select
 	}
 	
 	function add_stream_and_chat(tags) {
@@ -478,11 +484,13 @@ $(document).ready( function() {
 		if(!$.isArray(tags)) tags = [tags];
 		
 		index = parseInt($('.streamcontainer:last').attr('data-index')) + 1;
+		
+		if(isNaN(index)) index = 0;
 				
 		for (var i = 0; i < tags.length; i++) {
 			
 			$.get(base_url + "ms-getobject/type/stream/tag/" + tags[i] + "/index/" + (index + i) + "/", function(data){
-				$('.streamoverlay:last').after(data);
+				$(data).appendTo('#layoutwrapper');
 				add_object_event_handlers($('.streamoverlay:last'));
 			});
 			
@@ -490,7 +498,7 @@ $(document).ready( function() {
 				
 				//Copy last chat menu into the new chat object.
 				$lastchat = $('.chatcontainer:last');
-				$lastchat.after(data);
+				$(data).appendTo('#layoutwrapper');
 				$thischat = $('.chatcontainer:last');
 				$thischat.find('.chatmenu').html($lastchat.find('.chatmenu').html());
 				add_object_event_handlers($thischat);
@@ -526,7 +534,7 @@ $(document).ready( function() {
 
 		}
 		
-		sync_layout(-1); //auto-select
+		sync_layout(); //auto-select
 	}
 	
 	function get_num_streams() {
@@ -546,7 +554,7 @@ $(document).ready( function() {
 			num_streams = get_num_streams();
 		
 		if(num_streams === 0)
-			return 0;
+			return [];
 		else
 			return Object.keys(layout_groups[num_streams]);
 	}
