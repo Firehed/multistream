@@ -484,16 +484,26 @@ $(document).ready( function() {
 			});
 			
 			$.get(ajax_url + "?action=getobject&type=chat&tag=" + tags[i] + "&index=" + (index + i), function(data){
-				$('.chatcontainer:last').after(data);
-				add_object_event_handlers($('.chatcontainer:last'));
-			});
-			
-			$("<li class='chatselector' data-index='" + (index + i) + "' data-tag='" + tags[i] + "'><span class='chaticon'></span> <span class='streamname'>" + tags[i] + "</span></li>")
+				
+				//Copy last chat menu into the new chat object.
+				$lastchat = $('.chatcontainer:last');
+				$lastchat.after(data);
+				$thischat = $('.chatcontainer:last');
+				$thischat.find('.chatmenu').html($lastchat.find('.chatmenu').html());
+				add_object_event_handlers($thischat);
+				index = $thischat.attr('data-index');
+				tag = $thischat.attr('data-tag');
+				
+				//Add this chat container to all the chat menus
+				$("<li class='chatselector' data-index='" + index + "' data-tag='" + tag + "'><span class='chaticon'></span> <span class='streamname'>" + tag + "</span></li>")
 				.appendTo($('.chatmenu'))
 				.click(function(e){
 					e.preventDefault();
 					choose_stream_chat($(this).attr('data-tag'));
 				});
+			});
+			
+
 			
 			old_url = getLocation().pathname;
 			matches = old_url.match(new RegExp("(.*)(\/layout[0-9][0-9]?.*)", "i"));
