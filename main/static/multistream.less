@@ -563,6 +563,10 @@ span.deleteicon {
 		height: 100%;
 		width: 100%;
 	}
+	
+	&.inactive object {
+		opacity: 0;
+	}
 }
 
 .chatcontainer {
@@ -583,6 +587,10 @@ span.deleteicon {
 	&.current {
 		z-index: 0;
 		visibility: visible;
+	}
+	
+	&.inactive iframe {
+		opacity: 0;
 	}
 }
 
@@ -675,6 +683,10 @@ span.deleteicon {
 .streamname {
 	font-weight: bold;
 	text-transform: uppercase;
+	
+	.inactive & {
+		display: none;
+	}
 }
 
 

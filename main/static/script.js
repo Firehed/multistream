@@ -301,12 +301,14 @@ $(document).ready( function() {
 	}
 
 
-	function choose_stream_both(tag = -1) {
+	function choose_stream_both(tag) {
+		if(typeof(tag) === 'undefined') tag = -1;
 		choose_stream_chat(tag);
 		choose_stream_audio(tag);
 	}
 
-	function choose_stream_audio(tag = -1) {
+	function choose_stream_audio(tag) {
+		if(typeof(tag) === 'undefined') tag = -1;
 		if(tag == -1) { // -1 = force auto-selection of first available stream
 			tag = $('.streamcontainer[data-index]:first').attr('data-tag');
 		}
@@ -331,7 +333,8 @@ $(document).ready( function() {
 		});
 	}
 
-	function choose_stream_chat(tag = -1) {
+	function choose_stream_chat(tag) {
+		if(typeof(tag) === 'undefined') tag = -1;
 		if(tag == -1) { // -1 = force auto-selection of first available stream
 			tag = $('.streamcontainer[data-index]:first').attr('data-tag');
 		}
@@ -348,7 +351,8 @@ $(document).ready( function() {
 		$('.chatmenu').hide();
 	}
 
-	function sync_layout(index = -1) {
+	function sync_layout(index) {
+		if(typeof(index) === 'undefined') index = -1;
 		
 		//console.debug(index);
 		
@@ -408,7 +412,11 @@ $(document).ready( function() {
 			choose_stream_audio();
 		}
 		
+		
 		if($('#buildlayoutform').length) {
+			
+			$('.streamcontainer,.streamoverlay,.chatcontainer').filter(function(){return -1 != $.inArray($(this).attr('data-tag'), get_form_streams())}).removeClass('inactive');
+			$('.streamcontainer,.streamoverlay,.chatcontainer').filter(function(){return -1 == $.inArray($(this).attr('data-tag'), get_form_streams())}).addClass('inactive');
 						
 			//Hide / show form fields based on how many streams there are
 			$('.streamfieldcontainer').each( function() {
@@ -424,6 +432,8 @@ $(document).ready( function() {
 			else
 				$('#submitbuttoncontainer').slideDown();
 
+		} else {
+			$('.streamcontainer,.streamoverlay,.chatcontainer').removeClass('inactive');
 		}
 		
 		
@@ -431,23 +441,30 @@ $(document).ready( function() {
 	}
 	
 	function sync_objects() {
+		var form_streams = get_form_streams();
+		var current_streams = get_current_streams();
+		var add_streams = $(form_streams).not(current_streams).get();
+		var remove_streams = $(current_streams).not(form_streams).get();
+		
+		close_stream_and_chat(remove_streams);
+		add_stream_and_chat(add_streams);
+	}
+	
+	function get_form_streams() {
 		var form_streams = [];
 		$('#buildlayoutform .streamfield').each(function() {
 			var value = $(this).val();
 			if(value) form_streams.push(value);
 		});
+		return form_streams;
+	}
+	
+	function get_current_streams() {
 		var current_streams = [];
 		$('.streamcontainer').each(function() {
 			current_streams.push($(this).attr('data-tag'));
 		});
-		var add_streams = $(form_streams).not(current_streams).get();
-		var remove_streams = $(current_streams).not(form_streams).get();
-		
-		//console.debug(add_streams);
-		//console.debug(remove_streams);
-		
-		close_stream_and_chat(remove_streams);
-		add_stream_and_chat(add_streams);
+		return current_streams;
 	}
 
 	function getLocation() {
@@ -545,12 +562,12 @@ $(document).ready( function() {
 		}
 	}
 
-	function get_first_valid_layout_index(num_streams=null,chat=null) {
+	function get_first_valid_layout_index(num_streams,chat) {
 		return get_valid_layout_indexes(num_streams,chat)[0];
 	}
 
-	function get_valid_layout_indexes(num_streams=null,chat=null) {
-		if(num_streams === null)
+	function get_valid_layout_indexes(num_streams,chat) {
+		if(typeof(num_streams) === 'undefined')
 			num_streams = get_num_streams();
 		
 		if(num_streams === 0)

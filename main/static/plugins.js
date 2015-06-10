@@ -113,7 +113,8 @@ return p},o.prototype._getColGroup=function(t){if(2>t)return this.colYs;for(var 
 		$('#'+field_id).val('').parent().siblings('.streamstatusicon').attr('data-status', '');
 	};
 	
-	$.fn.streamfield.set_status = function(field_id,status='') {
+	$.fn.streamfield.set_status = function(field_id,status) {
+		if(typeof(status) === 'undefined') status = '';
 		//console.log('setting status:' + field_id + '/' + status);
 		$('#'+field_id).parent().siblings('.streamstatusicon').attr('data-status', status);
 	};
