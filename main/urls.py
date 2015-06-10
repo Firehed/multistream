@@ -7,7 +7,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^%s$' % settings.URL_INFIX, 'main.views.index'),
-    url(r'^%sms-ajax/' % settings.URL_INFIX, 'main.views.ajax'),
+    url(r'^%sms-getobject/type/(?P<obj_type>[a-zA-Z]+)/tag/(?P<obj_tag>[a-zA-Z0-9_]+)/index/(?P<obj_index>[0-9]+)/' % settings.URL_INFIX, 'main.views.get_object'),
+    url(r'^%sms-updatestreams/' % settings.URL_INFIX, 'main.views.update_streams'),
+    url(r'^%sms-updatechannels/' % settings.URL_INFIX, 'main.views.update_channels'),
     url(r'^%slive_now/$' % settings.URL_INFIX, 'main.views.live_now'),
     url(r'^%sview/$' % settings.URL_INFIX, 'main.views.view_streams'),
     url(r'^%sms-admin/' % settings.URL_INFIX, include(admin.site.urls)),

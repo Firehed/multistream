@@ -470,7 +470,6 @@ $(document).ready( function() {
 	}
 	
 	function add_stream_and_chat(tags) {
-		if(ajax_url === undefined) return;
 		
 		if(!$.isArray(tags)) tags = [tags];
 		
@@ -478,12 +477,12 @@ $(document).ready( function() {
 				
 		for (var i = 0; i < tags.length; i++) {
 			
-			$.get(ajax_url + "?action=getobject&type=stream&tag=" + tags[i] + "&index=" + (index + i), function(data){
+			$.get(base_url + "ms-getobject/type/stream/tag/" + tags[i] + "/index/" + (index + i) + "/", function(data){
 				$('.streamoverlay:last').after(data);
 				add_object_event_handlers($('.streamoverlay:last'));
 			});
 			
-			$.get(ajax_url + "?action=getobject&type=chat&tag=" + tags[i] + "&index=" + (index + i), function(data){
+			$.get(base_url + "ms-getobject/type/chat/tag/" + tags[i] + "/index/" + (index + i) + "/", function(data){
 				
 				//Copy last chat menu into the new chat object.
 				$lastchat = $('.chatcontainer:last');
@@ -502,8 +501,6 @@ $(document).ready( function() {
 					choose_stream_chat($(this).attr('data-tag'));
 				});
 			});
-			
-
 			
 			old_url = getLocation().pathname;
 			matches = old_url.match(new RegExp("(.*)(\/layout[0-9][0-9]?.*)", "i"));

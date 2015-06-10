@@ -376,27 +376,7 @@ def live_now(request):
 	return r
 	
 
-def ajax(request):
-	action = request.GET.get('action','none')
-
-	# All of the functions called here should return an HttpResponse object.
-	if action.lower() == 'updatechannels':
-		return update_channels(request)
-	elif action.lower() == 'updatestreams':
-		return update_streams(request)
-	elif action.lower() == 'getobject':
-		return get_object(request)
-	else:
-		return HttpResponse("Error: No valid action specified.")
-
-
-def get_object(request):
-	obj_type = request.GET.get('type',None)
-	obj_tag = request.GET.get('tag',None)
-	obj_index = int(request.GET.get('index',-1))
-	obj_active = request.GET.get('active','true')
-	if obj_active != 'true':
-		obj_active = 'false'
+def get_object(request,obj_type=None,obj_tag=None,obj_index=-1):
 	
 	if (obj_type == 'stream' or obj_type == 'chat') and obj_index >= 0 and obj_tag != '':
 		t = loader.get_template('object.html')
@@ -406,7 +386,6 @@ def get_object(request):
 				'objtype' : obj_type,
 				'index' : obj_index,
 				'tag' : obj_tag,
-				'active' : obj_active,
 				'use_live_embeds' : settings.USE_LIVE_EMBEDS,
 				'use_flash_player' : settings.USE_FLASH_PLAYER,
 			},
@@ -414,7 +393,7 @@ def get_object(request):
 		return HttpResponse(t.render(c))
 		
 	else:
-		return HttpResponse("Error: Object type, index, or tag missing.")
+		return HttpResponse("Error: Object type, index, or tag missing or invalid.")
 
 
 
