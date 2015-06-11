@@ -93,8 +93,11 @@ $(document).ready( function() {
 		});
 		
 		$element.find('.streamfield').streamfield().keyup(function() {
+			$(this).attr('data-tag',$(this).val());
 			sync_layout();
 			update_selected_channels();
+		}).each(function() {
+			$(this).attr('data-tag',$(this).val());
 		});
 			
 		setTimeout(function(){$element.find('.streamfield').filter(function(){return this.value==""}).first().focus();},100);
@@ -174,6 +177,8 @@ $(document).ready( function() {
 		$element.find('.closebutton[data-tag]').click(function(e) {
 			e.preventDefault();
 			close_stream_and_chat($(this).attr('data-tag')); 
+			reindex_objects();
+			sync_layout();
 		});
 		$element.find('.reloadstream[data-tag]').click(function(e) {
 			e.preventDefault();
@@ -263,10 +268,14 @@ $(document).ready( function() {
 		for(class_i in object_classes) {
 			$objects = $('.' + object_classes[class_i]);
 			$objects.each(function() {
-				if($(this).hasClass('chatselector')) {
-					$(this).attr('data-index', $(this).index());
+				if($('#buildlayoutform').length) {
+					$(this).attr('data-index', $('.streamfield[data-tag="' + $(this).attr('data-tag') + '"]').attr('data-index'));
 				} else {
-					$(this).attr('data-index', $objects.index($(this)));
+					if($(this).hasClass('chatselector')) {
+						$(this).attr('data-index', $(this).index());
+					} else {
+						$(this).attr('data-index', $objects.index($(this)));
+					}
 				}
 			});
 		}
@@ -447,7 +456,9 @@ $(document).ready( function() {
 		var remove_streams = $(current_streams).not(form_streams).get();
 		
 		close_stream_and_chat(remove_streams);
+		reindex_objects();
 		add_stream_and_chat(add_streams);
+		sync_layout();
 	}
 	
 	function get_form_streams() {
@@ -491,27 +502,27 @@ $(document).ready( function() {
 			$('a.edit.sidebar-button').attr('href', new_edit_url);
 			
 		}
-		
-		reindex_objects();
-		sync_layout(); //auto-select
 	}
 	
 	function add_stream_and_chat(tags) {
 		
 		if(!$.isArray(tags)) tags = [tags];
 		
-		index = parseInt($('.streamcontainer:last').attr('data-index')) + 1;
-		
-		if(isNaN(index)) index = 0;
-				
-		for (var i = 0; i < tags.length; i++) {
+		for (i in tags) {
 			
-			$.get(base_url + "ms-getobject/type/stream/tag/" + tags[i] + "/index/" + (index + i) + "/", function(data){
+			if($('.streamfield[data-tag="' + tags[i] + '"]').length) {
+				index = $('.streamfield[data-tag="' + tags[i] + '"]').attr('data-index');
+			} else {
+				index = parseInt($('.streamcontainer:last').attr('data-index')) + 1;
+				if(isNaN(index)) index = 0;
+			}
+			
+			$.get(base_url + "ms-getobject/type/stream/tag/" + tags[i] + "/index/" + index + "/", function(data){
 				$(data).appendTo('#layoutwrapper');
 				add_object_event_handlers($('.streamoverlay:last'));
 			});
 			
-			$.get(base_url + "ms-getobject/type/chat/tag/" + tags[i] + "/index/" + (index + i) + "/", function(data){
+			$.get(base_url + "ms-getobject/type/chat/tag/" + tags[i] + "/index/" + index + "/", function(data){
 				
 				//Copy last chat menu into the new chat object.
 				$lastchat = $('.chatcontainer:last');
@@ -519,11 +530,11 @@ $(document).ready( function() {
 				$thischat = $('.chatcontainer:last');
 				$thischat.find('.chatmenu').html($lastchat.find('.chatmenu').html());
 				add_object_event_handlers($thischat);
-				index = $thischat.attr('data-index');
-				tag = $thischat.attr('data-tag');
+				thisindex = $thischat.attr('data-index');
+				thistag = $thischat.attr('data-tag');
 				
 				//Add this chat container to all the chat menus
-				$("<li class='chatselector' data-index='" + index + "' data-tag='" + tag + "'><span class='chaticon'></span> <span class='streamname'>" + tag + "</span></li>")
+				$("<li class='chatselector' data-index='" + thisindex + "' data-tag='" + thistag + "'><span class='chaticon'></span> <span class='streamname'>" + thistag + "</span></li>")
 				.appendTo($('.chatmenu'))
 				.click(function(e){
 					e.preventDefault();
@@ -550,8 +561,6 @@ $(document).ready( function() {
 			$('a.edit.sidebar-button').attr('href', new_edit_url);
 
 		}
-		
-		sync_layout(); //auto-select
 	}
 	
 	function get_num_streams() {
