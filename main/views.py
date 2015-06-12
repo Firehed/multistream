@@ -325,7 +325,7 @@ def view_tag(request, tag = ''):
 
 
 #Run this via a cron job. i.e., curl http://localhost/multistream/ms-update_streams/
-def update_streams():
+def update_streams(request):
 	twitch = TwitchAPI()
 	channels = [x for x in Channel.objects.filter(active=True) if x.current()]
 	channel_list = [channel.name for channel in channels]
@@ -350,7 +350,7 @@ def update_streams():
 	else:
 		return HttpResponse("twitchapi not responding")
 
-def update_channels():
+def update_channels(request):
 	twitch = TwitchAPI()
 	channels = [x for x in Channel.objects.filter(active=True) if x.current()]
 	
