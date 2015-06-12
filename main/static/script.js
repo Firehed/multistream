@@ -9,6 +9,7 @@ $(document).ready( function() {
 	var default_tag_filter = ".tag-kbmod";
 	var default_sort = "random";
 	var num_streams = 0; //ugh, couldn't quite get rid of this
+	var layout_timer = false;
 	
 	/************************
 	 * Index page handlers
@@ -26,21 +27,12 @@ $(document).ready( function() {
 			e.preventDefault();
 			
 			if($('#popupform').length) {
-				$('#layoutwrapper').removeClass('dimmed');
 				$(this).removeClass('selected');
-				remove_dummy_streams();
-				$('#popupform').fadeOut(function(){$(this).remove();sync_layout();});
-				$('#popupoverlay').fadeOut(function(){$(this).remove();});
+				hide_popup_form();
+				setTimeout(function(){sync_layout();},500);
 			} else {
-				$('#layoutwrapper').addClass('dimmed');
 				$(this).addClass('selected');
-				$("<div id=popupoverlay style='display:none'>").insertAfter($(this)).click(function(){$('#sidebar .edit.sidebar-button').click();}).fadeIn();
-				$("<div id=popupform style='display:none'>").load($(this).attr('href') + ' #buildlayoutform', function() {
-					$quickpicks = 0; //force isotope re-init
-					add_index_event_handlers($(this));
-					add_dummy_streams();
-					$(this).fadeIn();
-				}).insertAfter($(this));
+				show_popup_form();
 			}
 		});
 		
@@ -80,6 +72,24 @@ $(document).ready( function() {
 	 * Functions
 	 */
 	 
+	function show_popup_form() {
+		$('#layoutwrapper').addClass('dimmed');
+		$("<div id=popupoverlay style='display:none'>").insertAfter($('#sidebar .edit.sidebar-button')).click(function(){$('#sidebar .edit.sidebar-button').click();}).fadeIn();
+		$("<div id=popupform style='display:none'>").load($('#sidebar .edit.sidebar-button').attr('href') + ' #buildlayoutform', function() {
+			$quickpicks = 0; //force isotope re-init
+			add_index_event_handlers($(this));
+			add_dummy_streams();
+			$(this).fadeIn();
+		}).insertAfter($('#sidebar .edit.sidebar-button'));
+	}
+	
+	function hide_popup_form() {
+		$('#layoutwrapper').removeClass('dimmed');
+		$('#popupform').fadeOut(function(){$(this).remove();});
+		$('#popupoverlay').fadeOut(function(){$(this).remove();});
+		remove_dummy_streams();
+	}
+	 
 	function add_index_event_handlers($element) {
 		
 		$('#popupform').draggable();
@@ -88,9 +98,7 @@ $(document).ready( function() {
 			if($('#sidebar').length) {
 				e.preventDefault();
 				sync_objects();
-				sync_layout();
-				sync_urls();
-				$('#sidebar .edit.sidebar-button').click();
+				hide_popup_form();
 			}
 		});
 		
@@ -103,17 +111,19 @@ $(document).ready( function() {
 		
 		//RECURSION FTW
 		$element.find('.streamfield').streamfield().keyup(function() {
+			if(layout_timer) clearTimeout(layout_timer);
+			
 			if($(this).val() == "") {
 				$next_field = $(this).parents('.streamfieldcontainer').next().find('.streamfield');
 				
-				if($next_field.length) {
+				if($next_field.length && $next_field.val() != '') {
 					$(this).val($next_field.val());
 					$next_field.val('').keyup();
 				}
 			}
 			$(this).attr('data-tag',$(this).val());
 			update_selected_channels();
-			sync_layout();
+			layout_timer = setTimeout(function(){sync_layout();}, 100);
 		}).each(function() {
 			$(this).attr('data-tag',$(this).val());
 		});
@@ -139,7 +149,6 @@ $(document).ready( function() {
 			} else {
 				remove_from_form_streams($(this).attr('rel'));
 			}
-			sync_layout();
 		});
 
 
@@ -167,7 +176,7 @@ $(document).ready( function() {
 		
 
 		$element.find('.tabs').tabs();
-		if($('#popupform').length) sync_layout();
+		sync_layout();
 		
 		if(window.location.hash.substring(0,9) == "#featured")
 			setTimeout(function(){$('#featured-tab-selector a').click();}, 100);
@@ -175,8 +184,20 @@ $(document).ready( function() {
 	}
 	
 	function add_object_event_handlers($element) {
-		$element.find('button.reloadchat').click( function() {
-			$(this).parents('.chatcontainer').find('iframe').attr( 'src', function ( i, val ) { return val; });
+		$element.find('button.reloadchat[data-tag]').click( function() {
+			$('.chatcontainer[data-tag="'+ $(this).attr('data-tag') +'"]').find('iframe').attr( 'src', function ( i, val ) { return val; });
+		});
+		$element.find('button.reloadstream[data-tag]').click(function(e) {
+			e.preventDefault();
+			$('.streamcontainer[data-tag="'+ $(this).attr('data-tag') +'"]').find('object').attr( 'data', function ( i, val ) { return val; });
+			
+			if($(this).attr('data-tag') == get_current_audio()) {
+				$('.streamcontainer[data-tag="'+ $(this).attr('data-tag') +'"]').find('object')
+					.each(function(){
+						try { $(this)[0].unmute(); }
+						catch(e) {}
+					});
+			}
 		});
 		$element.find('.chatmenuopener').click( function() {
 			$(this).siblings('.chatmenu').slideToggle(150);
@@ -199,10 +220,6 @@ $(document).ready( function() {
 			reindex_objects();
 			sync_layout();
 			sync_urls();
-		});
-		$element.find('.reloadstream[data-tag]').click(function(e) {
-			e.preventDefault();
-			reload_stream($(this).attr('data-tag')); 
 		});
 	}
 
@@ -308,7 +325,7 @@ $(document).ready( function() {
 	function add_to_form_streams(streamname) {
 		if($('.streamfield').filter(function(){return this.value==streamname}).length == 0) {
 			$first_empty = $('.streamfield').filter(function(){return this.value==""}).first();
-			$first_empty.val(streamname).attr('data-tag',streamname);
+			$first_empty.val(streamname).attr('data-tag',streamname).keyup();
 			return true;
 		} else {
 			return false;
@@ -383,9 +400,8 @@ $(document).ready( function() {
 	}
 
 	function sync_layout(index) {
+		//console.debug('layout');
 		if(typeof(index) === 'undefined') index = -1;
-		
-		//console.debug(index);
 		
 		old_num_streams = num_streams;
 		num_streams = get_num_streams();
@@ -457,6 +473,7 @@ $(document).ready( function() {
 	}
 	
 	function sync_urls() {
+		//console.debug('urls');
 		var layout = get_current_layout();
 		var streams = $('#buildlayoutform').length > 0 ? get_form_streams() : get_current_streams();
 		
@@ -468,10 +485,17 @@ $(document).ready( function() {
 	}
 	
 	function sync_objects() {
+		//console.debug('objects');
 		var form_streams = get_form_streams();
 		var current_streams = get_current_streams();
 		var add_streams = $(form_streams).not(current_streams).get();
 		var remove_streams = $(current_streams).not(form_streams).get();
+		
+		//Lil' shortcut
+		if(remove_streams.length == current_streams.length) {
+			window.location.href = base_url + add_streams.join("/") + '/layout' + get_first_valid_layout_index(add_streams.length) + '/';
+			return;
+		}
 		
 		close_stream_and_chat(remove_streams);
 		reindex_objects();
@@ -528,12 +552,7 @@ $(document).ready( function() {
 				if(isNaN(index)) index = 0;
 			}
 			
-			$.get(base_url + "ms-getobject/type/stream/tag/" + tags[i] + "/index/" + index + "/", function(data){
-				$(data).appendTo('#layoutwrapper');
-				add_object_event_handlers($('.streamoverlay:last'));
-			});
-			
-			$.get(base_url + "ms-getobject/type/chat/tag/" + tags[i] + "/index/" + index + "/", function(data){
+			$.get(base_url + "ms-getobject/type/both/tag/" + tags[i] + "/index/" + index + "/", function(data){
 				
 				//Copy last chat menu into the new chat object.
 				$lastchat = $('.chatcontainer:last');
@@ -541,6 +560,7 @@ $(document).ready( function() {
 				$thischat = $('.chatcontainer:last');
 				$thischat.find('.chatmenu').html($lastchat.find('.chatmenu').html());
 				add_object_event_handlers($thischat);
+				add_object_event_handlers($('.streamoverlay:last'));
 				thisindex = $thischat.attr('data-index');
 				thistag = $thischat.attr('data-tag');
 				
@@ -562,7 +582,8 @@ $(document).ready( function() {
 			for(i=0; i < num_to_add ; i++) {
 				$('<div class="streamcontainer dummy" data-tag="" data-index="' + i + '" data-object-type="stream"></div>' +
 				  '<div class="streamoverlay dummy" data-tag="" data-index="' + i + '" data-object-type="stream">' +
-				  '<div class="overlaypopup dummy"><div class="overlaycaption"><span class="streamnumber">' + (i + 1) + '</span>').appendTo('#layoutwrapper');
+				  '<div class="overlaypopup dummy"><div class="overlaycaption"><span class="streamnumber">' + (i + 1) + '</span></div></div></div>' +
+				  '<div class="chatcontainer current dummy" data-tag="" data-index="'+ i +'" data-object-type="chat"></div>').appendTo('#layoutwrapper');
 			}
 		}
 	}

@@ -309,6 +309,20 @@ def view_streams(request, streams_url=''):
 	return HttpResponse(t.render(c))
 
 
+def view_tag(request, tag = ''):
+	tag = tag.rstrip('/').replace('-', ' ').lower()
+	tags = Tag.objects.filter(active=True,name__iexact=tag)
+	
+	if len(tags) == 1 and tags[0].current():
+		channels = [x.name for x in tags[0].channels.filter(active=True,live=True)]
+		
+		if len(channels):
+			return HttpResponseRedirect('/' + settings.URL_INFIX + '%s/layout%s/' % ('/'.join(channels).lower(), default_layout(len(channels))))
+		else:
+			return HttpResponseRedirect('/' + settings.URL_INFIX + '#featured/' + tag.replace(' ', '-') + '/')
+	else:
+		return HttpResponseNotFound('"%s": Tag Not Found.' % tag)
+
 
 #Run this via a cron job. i.e., curl http://localhost/multistream/ms-update_streams/
 def update_streams():
@@ -378,7 +392,7 @@ def live_now(request):
 
 def get_object(request,obj_type=None,obj_tag=None,obj_index=-1):
 	
-	if (obj_type == 'stream' or obj_type == 'chat') and obj_index >= 0 and obj_tag != '':
+	if (obj_type == 'stream' or obj_type == 'chat' or obj_type == 'both') and obj_index >= 0 and obj_tag != '':
 		t = loader.get_template('object.html')
 		
 		c = RequestContext(request, {
