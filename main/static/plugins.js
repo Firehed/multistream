@@ -16,7 +16,7 @@ return p},o.prototype._getColGroup=function(t){if(2>t)return this.colYs;for(var 
 (function( $ ){
 	$.fn.streamfield = function() {
 		
-		this.filter('input').each(function() {
+		this.each(function() {
 			$.fn.streamfield.fields[$(this).attr('id')] = {
 				querying: false,
 				timer: false,
@@ -30,6 +30,7 @@ return p},o.prototype._getColGroup=function(t){if(2>t)return this.colYs;for(var 
 		});
 			
 		this.keyup(function(e){
+			
 			field_id = $(this).attr('id'); 
 			if($.fn.streamfield.fields[field_id].timer) clearTimeout($.fn.streamfield.fields[field_id].timer);
 			

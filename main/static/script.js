@@ -28,23 +28,25 @@ $(document).ready( function() {
 			if($('#popupform').length) {
 				$('#layoutwrapper').removeClass('dimmed');
 				$(this).removeClass('selected');
+				remove_dummy_streams();
 				$('#popupform').fadeOut(function(){$(this).remove();sync_layout();});
 				$('#popupoverlay').fadeOut(function(){$(this).remove();});
 			} else {
 				$('#layoutwrapper').addClass('dimmed');
 				$(this).addClass('selected');
-				
 				$("<div id=popupoverlay style='display:none'>").insertAfter($(this)).click(function(){$('#sidebar .edit.sidebar-button').click();}).fadeIn();
 				$("<div id=popupform style='display:none'>").load($(this).attr('href') + ' #buildlayoutform', function() {
 					$quickpicks = 0; //force isotope re-init
 					add_index_event_handlers($(this));
+					add_dummy_streams();
 					$(this).fadeIn();
 				}).insertAfter($(this));
 			}
 		});
 		
-		$('.layoutselector[data-index]').click(function(e) {
+		$('#sidebar .layoutselector[data-index]').click(function(e) {
 			sync_layout($(this).attr('data-index'));
+			sync_urls();
 		});
 		
 		
@@ -64,10 +66,13 @@ $(document).ready( function() {
 		//Pick a valid layout if one wasn't provided from the url
 		var url_layout = document.location.href.match(/layout=?([0-9][0-9]?)/i);
 		if(url_layout) url_layout = url_layout[1];
-		if(-1 == $.inArray(url_layout, get_valid_layout_indexes()) )
+		if(-1 == $.inArray(url_layout, get_valid_layout_indexes()) ) {
 			sync_layout();
-		else
+			sync_urls();
+		} else {
 			sync_layout(url_layout);
+		}
+		
 	}
 	
 	
@@ -76,11 +81,15 @@ $(document).ready( function() {
 	 */
 	 
 	function add_index_event_handlers($element) {
+		
+		$('#popupform').draggable();
 	
 		$element.find('button[type="submit"]').click(function(e) {
 			if($('#sidebar').length) {
 				e.preventDefault();
 				sync_objects();
+				sync_layout();
+				sync_urls();
 				$('#sidebar .edit.sidebar-button').click();
 			}
 		});
@@ -92,10 +101,19 @@ $(document).ready( function() {
 			}
 		});
 		
+		//RECURSION FTW
 		$element.find('.streamfield').streamfield().keyup(function() {
+			if($(this).val() == "") {
+				$next_field = $(this).parents('.streamfieldcontainer').next().find('.streamfield');
+				
+				if($next_field.length) {
+					$(this).val($next_field.val());
+					$next_field.val('').keyup();
+				}
+			}
 			$(this).attr('data-tag',$(this).val());
-			sync_layout();
 			update_selected_channels();
+			sync_layout();
 		}).each(function() {
 			$(this).attr('data-tag',$(this).val());
 		});
@@ -104,7 +122,8 @@ $(document).ready( function() {
 
 
 		$element.find('.layoutselector[data-index]').click( function() { 
-			sync_layout( $(this).attr('data-index') ); 
+			sync_layout( $(this).attr('data-index') );
+			sync_urls();
 		});
 		
 		
@@ -148,7 +167,7 @@ $(document).ready( function() {
 		
 
 		$element.find('.tabs').tabs();
-		sync_layout();
+		if($('#popupform').length) sync_layout();
 		
 		if(window.location.hash.substring(0,9) == "#featured")
 			setTimeout(function(){$('#featured-tab-selector a').click();}, 100);
@@ -179,6 +198,7 @@ $(document).ready( function() {
 			close_stream_and_chat($(this).attr('data-tag')); 
 			reindex_objects();
 			sync_layout();
+			sync_urls();
 		});
 		$element.find('.reloadstream[data-tag]').click(function(e) {
 			e.preventDefault();
@@ -242,7 +262,7 @@ $(document).ready( function() {
 			$('#live-filters button[data-filter-value="'+ default_live_filter +'"]').addClass('selected');
 			$('#sort-filters button[data-sort-value="'+ default_sort +'"]').addClass('selected');
 			update_selected_channels();
-			sync_layout();
+			//sync_layout();
 			update_filters();
 		}
 	}
@@ -269,14 +289,17 @@ $(document).ready( function() {
 			$objects = $('.' + object_classes[class_i]);
 			$objects.each(function() {
 				if($('#buildlayoutform').length) {
-					$(this).attr('data-index', $('.streamfield[data-tag="' + $(this).attr('data-tag') + '"]').attr('data-index'));
+					new_index = $('.streamfield[data-tag="' + $(this).attr('data-tag') + '"]').attr('data-index');
 				} else {
 					if($(this).hasClass('chatselector')) {
-						$(this).attr('data-index', $(this).index());
+						new_index = $(this).index();
 					} else {
-						$(this).attr('data-index', $objects.index($(this)));
+						new_index = $objects.index($(this));
 					}
 				}
+				
+				$(this).attr('data-index', new_index);
+				$(this).find('.streamnumber').html(parseInt(new_index) + 1);
 			});
 		}
 	}
@@ -294,8 +317,7 @@ $(document).ready( function() {
 
 	function remove_from_form_streams(streamname) {
 		$already_selected = $('.streamfield').filter(function(){return this.value==streamname});
-		$already_selected.val("").attr('data-tag','');
-		$.fn.streamfield.clear($already_selected.attr('id'));
+		$already_selected.val("").attr('data-tag','').keyup();
 	}
 
 	function update_selected_channels() {
@@ -403,9 +425,17 @@ $(document).ready( function() {
 		
 		if($('#buildlayoutform').length) {
 			
-			$('.streamcontainer,.streamoverlay,.chatcontainer').filter(function(){return -1 != $.inArray($(this).attr('data-tag'), get_form_streams())}).removeClass('inactive');
-			$('.streamcontainer,.streamoverlay,.chatcontainer').filter(function(){return -1 == $.inArray($(this).attr('data-tag'), get_form_streams())}).addClass('inactive');
-						
+			$('.streamcontainer:not(.dummy),.streamoverlay:not(.dummy),.chatcontainer:not(.dummy)')
+				.filter(function(){
+					return -1 != $.inArray($(this).attr('data-tag'), get_form_streams())
+				})
+				.removeClass('inactive');
+			$('.streamcontainer:not(.dummy),.streamoverlay:not(.dummy),.chatcontainer:not(.dummy)')
+				.filter(function(){
+					return -1 == $.inArray($(this).attr('data-tag'), get_form_streams())
+				})
+				.addClass('inactive');
+			
 			//Hide / show form fields based on how many streams there are
 			$('.streamfieldcontainer').each( function() {
 				if ( $(this).index() < num_streams + 1 ) 
@@ -424,15 +454,11 @@ $(document).ready( function() {
 			$('.streamcontainer,.streamoverlay,.chatcontainer').removeClass('inactive');
 		}
 		
-		if($('#layoutwrapper').length) {
-			sync_urls();
-		}
-		
 	}
 	
 	function sync_urls() {
 		var layout = get_current_layout();
-		var streams = get_current_streams();
+		var streams = $('#buildlayoutform').length > 0 ? get_form_streams() : get_current_streams();
 		
 		new_url = base_url + streams.join("/") + "/layout" + layout + "/";
 		new_edit_url = base_url + "edit/" + streams.join("/") + "/";
@@ -451,20 +477,21 @@ $(document).ready( function() {
 		reindex_objects();
 		add_stream_and_chat(add_streams);
 		sync_layout();
+		sync_urls();
 	}
 	
 	function get_form_streams() {
 		var form_streams = [];
 		$('#buildlayoutform .streamfield').each(function() {
 			var value = $(this).val();
-			if(value) form_streams.push(value);
+			if(value) form_streams[parseInt($(this).attr('data-index'))] = value;
 		});
 		return form_streams;
 	}
 	
 	function get_current_streams() {
 		var current_streams = [];
-		$('.streamcontainer').each(function() {
+		$('.streamcontainer[data-tag!=""]').each(function() {
 			current_streams[parseInt($(this).attr('data-index'))] =  $(this).attr('data-tag');
 		});
 		return current_streams;
@@ -527,6 +554,21 @@ $(document).ready( function() {
 			});
 
 		}
+	}
+	
+	function add_dummy_streams() {
+		var num_to_add = $('.streamfield').length;
+		if(num_to_add) {
+			for(i=0; i < num_to_add ; i++) {
+				$('<div class="streamcontainer dummy" data-tag="" data-index="' + i + '" data-object-type="stream"></div>' +
+				  '<div class="streamoverlay dummy" data-tag="" data-index="' + i + '" data-object-type="stream">' +
+				  '<div class="overlaypopup dummy"><div class="overlaycaption"><span class="streamnumber">' + (i + 1) + '</span>').appendTo('#layoutwrapper');
+			}
+		}
+	}
+	
+	function remove_dummy_streams () {
+		$('.streamcontainer.dummy,.streamoverlay.dummy,.chatcontainer.dummy').remove();
 	}
 	
 	function get_num_streams() {

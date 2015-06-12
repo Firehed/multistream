@@ -22,7 +22,7 @@
 						<div class='chaticon hidden-when-no-chat'></div>
 						<div class='overlaypopup'>
 							<div class='overlaycaption'>
-								<span class="streamname">{{ obj.tag }}</span>
+								<span class="streamnumber">{{ obj.index|add:1 }}</span> <span class="streamname">{{ obj.tag }}</span>
 							</div>
 							<div class='mainbuttons'>
 								<button class='audiobutton hidden-when-one-stream' data-tag='{{ obj.tag }}' title='Audio'><span class="audioicon"></span> Audio</button>

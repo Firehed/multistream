@@ -567,6 +567,10 @@ span.deleteicon {
 	&.inactive object {
 		opacity: 0;
 	}
+	
+	&.dummy {
+		z-index: -1;
+	}
 }
 
 .chatcontainer {
@@ -591,6 +595,10 @@ span.deleteicon {
 	
 	&.inactive iframe {
 		opacity: 0;
+	}
+	
+	&.dummy {
+		z-index: -1;
 	}
 }
 
@@ -664,9 +672,9 @@ span.deleteicon {
 	background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.7);
 	
 	.streamoverlay:hover &,
-	#layoutwrapper.dimmed & {
+	.streamoverlay.dummy & {
 		height: 3.5em;
-		padding: 1.5em 0 1.5em;
+		padding: 1em 0 1.75em;
 	}
 	.streamoverlay:hover & {
 		.auxbuttons, .mainbuttons {
@@ -678,6 +686,21 @@ span.deleteicon {
 .overlaycaption {
 	color: white;
 	font-size: 24px;
+}
+
+.streamnumber {
+	display: none;
+	font-weight: bold;
+	font-size: 150%;
+	border-radius: 0.5em;
+	border: solid 1px @white;
+	width: 1em;
+	height: 1em;
+	line-height: 0.95em;
+	margin: 0.3em auto 0;
+	.dummy & {
+		display: block;
+	}
 }
 
 .streamname {
