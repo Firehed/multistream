@@ -44,7 +44,7 @@
 					
 					<div class="chatcontainer{% if obj.index == 0 %} current{% endif %}" data-tag="{{ obj.tag }}" data-index="{{ obj.index }}" data-object-type="chat">
 						{% if use_live_embeds %}
-							<iframe frameborder="0" scrolling="no" src="http://twitch.tv/chat/embed?channel={{ obj.tag }}&amp;popout_chat=true"></iframe>
+							<iframe frameborder="0" scrolling="no" src="http://www.twitch.tv/{{ obj.tag }}/chat?popout="></iframe>
 						{% else %}
 							<!-- Chat embed would go here -->
 						{% endif %}
