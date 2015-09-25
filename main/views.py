@@ -314,7 +314,7 @@ def view_tag(request, tag = ''):
 	tags = Tag.objects.filter(active=True,name__iexact=tag)
 	
 	if len(tags) == 1 and tags[0].current():
-		channels = [x.name for x in tags[0].channels.filter(active=True,live=True)]
+		channels = [x.name for x in tags[0].channels.filter(active=True,live=True)][:MAX_STREAMS]
 		
 		if len(channels):
 			return HttpResponseRedirect('/' + settings.URL_INFIX + '%s/layout%s/' % ('/'.join(channels).lower(), default_layout(len(channels))))

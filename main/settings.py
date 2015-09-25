@@ -30,7 +30,7 @@ if RUNNING_ON_DEV:
 	
 else:
 	APP_DIR = os.path.dirname(os.path.abspath(__file__))
-	URL_INFIX = 'multistream/'
+	URL_INFIX = ''
 	DATABASES = {
 	    'default': {
 		'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
