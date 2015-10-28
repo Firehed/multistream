@@ -1,8 +1,9 @@
 import json, urllib2
+from site_specific_settings import CLIENT_ID
 
 class TwitchAPI:
 	def __init__(self):
-		self.client_id = 'jm46kg877p6t97wz3775ovq19orwvql' #KBMOD-specific. Change/remove me if open-sourcing.
+		self.client_id = CLIENT_ID #Add your Twitch API client ID here
 		self.api_url_base = 'https://api.twitch.tv/kraken/'
 		self.url_params = ''
 		self.api_headers = {

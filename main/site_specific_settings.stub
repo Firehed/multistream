@@ -1,0 +1,49 @@
+#Customize these values for your site.
+#Then copy this to a new file called site_specific_settings.py
+
+import os
+
+RUNNING_ON_DEV = True
+
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+
+USE_LIVE_EMBEDS = False
+
+CLIENT_ID = '' #Add your Twitch API Client ID here.
+
+ADMINS = (
+        ('Admin', 'admin@your-site.com'),
+)
+
+
+if RUNNING_ON_DEV:
+        APP_DIR = os.path.dirname(os.path.abspath(__file__))
+        URL_INFIX = '' #Sub-folder within the URL, i.e. http://your-site.com/URL_INFIX/blahblah
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+                'NAME': 'multistream.db',                      # Or path to database file if using sqlite3.
+                'USER': '',                      # Not used with sqlite3.
+                'PASSWORD': '',                  # Not used with sqlite3.
+                'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+                'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+            }
+        }
+        ALLOWED_HOSTS = ['localhost','dev-server']
+
+
+else:
+        APP_DIR = os.path.dirname(os.path.abspath(__file__))
+        URL_INFIX = '' #Sub-folder within the URL, i.e. http://your-site.com/URL_INFIX/blahblah
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+                'NAME': 'multistream.db',        # Or path to database file if using sqlite3
+                'USER': '',                      # Not used with sqlite3.
+                'PASSWORD': '',                  # Not used with sqlite3.
+                'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+                'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+            }
+        }
+        ALLOWED_HOSTS = ['your-site.com']
