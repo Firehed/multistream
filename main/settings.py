@@ -6,8 +6,7 @@ from site_specific_settings import *
 USE_FLASH_PLAYER = True
 
 ADMINS = (
-	('Sean Corbett', 'scorbett@kbmod.com'),
-	#('KBMOD Admin', 'admin@kbmod.com'),
+	('Sean Corbett', 'seanbutnotheard@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -41,7 +40,7 @@ else:
 		'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
 	    }
 	}
-	ALLOWED_HOSTS = ['kbmod.com','bdir.kbmod.com','multistre.am']
+	ALLOWED_HOSTS = ['multistre.am']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
