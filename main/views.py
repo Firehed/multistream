@@ -1,5 +1,6 @@
 import copy,datetime,re
 from twitchapi import TwitchAPI
+from site_specific_settings import CLIENT_ID
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
@@ -244,6 +245,7 @@ def index(request, streams_url=''):
 		'channels': channels,
 		'tags': tags,
 		'streams': streams,
+		'client_id': CLIENT_ID,
 	})
 	t = loader.get_template('index.html')
 	return HttpResponse(t.render(c))
@@ -303,7 +305,8 @@ def view_streams(request, streams_url=''):
 		'layout_group': layout_group,
 		'use_live_embeds' : settings.USE_LIVE_EMBEDS,
 		'use_flash_player' : settings.USE_FLASH_PLAYER,
-		'edit_url': '/' + settings.URL_INFIX + 'edit/%s/' % ('/'.join(streams).lower())
+		'edit_url': '/' + settings.URL_INFIX + 'edit/%s/' % ('/'.join(streams).lower()),
+		'client_id': CLIENT_ID,
 	})
 	t = loader.get_template('view.html')
 	return HttpResponse(t.render(c))

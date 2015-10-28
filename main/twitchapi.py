@@ -3,7 +3,7 @@ from site_specific_settings import CLIENT_ID
 
 class TwitchAPI:
 	def __init__(self):
-		self.client_id = CLIENT_ID #Add your Twitch API client ID here
+		self.client_id = CLIENT_ID
 		self.api_url_base = 'https://api.twitch.tv/kraken/'
 		self.url_params = ''
 		self.api_headers = {

@@ -79,34 +79,34 @@ return p},o.prototype._getColGroup=function(t){if(2>t)return this.colYs;for(var 
 		
 		if (channel_tag) {
 			
-			$.fn.streamfield.fields[field_id].querying = true;
-			$.fn.streamfield.set_status(field_id,'loading');
-			$.ajax({
-				type: "GET",
-				url: "https://api.twitch.tv/kraken/streams/" + channel_tag,
-				beforeSend: function(xhr) {
-					xhr.setRequestHeader("Accept", "application/vnd.twitchtv.v2+json");
-					xhr.setRequestHeader("Client-ID","jm46kg877p6t97wz3775ovq19orwvql");
-				},
-				dataType: "jsonp",
-				success: function(data,textStatus,jqXHR) {
-					if ( data['status'] == 404 ) {
-						$.fn.streamfield.set_status(field_id,'doesntexist');
-					} else {
-						if ( data['stream'] ) {
+			if(typeof(Twitch) !== 'undefined') {
+				
+				$.fn.streamfield.fields[field_id].querying = true;
+				$.fn.streamfield.set_status(field_id,'loading');
+				
+				Twitch.api({
+					method: 'streams/' + channel_tag,
+				}, function (error, resp_obj) {
+					if(error) {
+						if(error['status'] == 422 || error['status'] == 404) {
+							$.fn.streamfield.set_status(field_id,'doesntexist');
+						} else {
+							//some other API error, give up
+							$.fn.streamfield.set_status(field_id,'');
+						}
+					} else {						
+						if(resp_obj['stream']) {
 							$.fn.streamfield.set_status(field_id,'existsandstreaming');
 						} else {
 							$.fn.streamfield.set_status(field_id,'exists');
 						}
 					}
+					
 					$.fn.streamfield.fields[field_id].querying = false;
-				},
-				error: function(jqXHR,textStatus,errorThrown) {
-					console.log('Error:' +textStatus + " ; " + errorThrown);
-					$.fn.streamfield.fields[field_id].querying = false;
-					$.fn.streamfield.set_status(field_id);
-				}
-			});
+				});
+				
+			}
+			
 		}
 	};
 	
