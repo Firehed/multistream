@@ -4,7 +4,8 @@ $(document).ready( function() {
 	 * Setup
 	 */
 	
-	var $quickpicks = 0;
+	var $featured_container = 0;
+	var $followed_container = 0;
 	var default_live_filter = "*";
 	var default_tag_filter = ".tag-kbmod";
 	var default_sort = "random";
@@ -76,7 +77,8 @@ $(document).ready( function() {
 		$('#layoutwrapper').addClass('dimmed');
 		$("<div id=popupoverlay style='display:none'>").insertAfter($('#sidebar .edit.sidebar-button')).click(function(){$('#sidebar .edit.sidebar-button').click();}).fadeIn();
 		$("<div id=popupform style='display:none'>").load($('#sidebar .edit.sidebar-button').attr('href') + ' #buildlayoutform', function() {
-			$quickpicks = 0; //force isotope re-init
+			$featured_container = 0; //force isotope re-init
+			$followed_container = 0;
 			add_index_event_handlers($(this));
 			add_dummy_streams();
 			$(this).fadeIn();
@@ -92,6 +94,7 @@ $(document).ready( function() {
 	 
 	function add_index_event_handlers($element) {
 		
+		$('#popupform .ui-tabs-nav').css('cursor','move !important');
 		$('#popupform').draggable();
 	
 		$element.find('button[type="submit"]').click(function(e) {
@@ -137,25 +140,15 @@ $(document).ready( function() {
 		});
 		
 		
-		$element.find('.channel').click(function(){
-			$(this).toggleClass('selected');
-			if($(this).hasClass('selected')){
-				if($('.streamfield').filter(function(){return this.value==""}).length == 0) {
-					window.alert("Max number of streams already selected!");
-					$(this).removeClass('selected');
-				} else {
-					add_to_form_streams($(this).attr('rel'));
-				}
-			} else {
-				remove_from_form_streams($(this).attr('rel'));
-			}
-		});
+		add_channellist_event_handlers($('.channellist'));
 
 
 		$element.find('.tabs').bind('tabsactivate', function(event, ui) {
 			switch (ui.newTab.index()){
 			case 1: 
-				setup_isotope();
+				setup_featured();
+			case 2:
+				setup_followed();
 			break;
 			}
 		});
@@ -222,10 +215,26 @@ $(document).ready( function() {
 			sync_urls();
 		});
 	}
+	
+	function add_channellist_event_handlers($element) {
+		$element.find('.channel').click(function(){
+			$(this).toggleClass('selected');
+			if($(this).hasClass('selected')){
+				if($('.streamfield').filter(function(){return this.value==""}).length == 0) {
+					window.alert("Max number of streams already selected!");
+					$(this).removeClass('selected');
+				} else {
+					add_to_form_streams($(this).attr('rel'));
+				}
+			} else {
+				remove_from_form_streams($(this).attr('rel'));
+			}
+		});
+	}
 
-	function setup_isotope() {
-		if($quickpicks==0) {
-			$quickpicks = $('#channellist').isotope({
+	function setup_featured() {
+		if($featured_container==0) {
+			$featured_container = $('#featuredlist').isotope({
 				transitionDuration: '0.5s',
 				itemSelector: '.channel',
 				getSortData: {
@@ -245,17 +254,9 @@ $(document).ready( function() {
 				}
 			});
 
-			$quickpicks.isotope('on','layoutComplete', function( isoInstance, laidOutItems ){
+			$featured_container.isotope('on','layoutComplete', function( isoInstance, laidOutItems ){
 				setTimeout(function(){ //wait for animations to finish
-					$('.channel').each(function() {
-						$(this).removeClass('selected');
-						remove_from_form_streams($(this).attr('rel'));
-					});
-					$('.channel.live:visible').each(function() {
-						$(this).addClass('selected');
-						add_to_form_streams($(this).attr('rel'));
-					});
-					update_selected_channels();
+					update_form_channels();
 					sync_layout();
 				},500);
 			});
@@ -278,10 +279,64 @@ $(document).ready( function() {
 			$('#tag-filters button[data-filter-value="'+ tag_filter +'"]').addClass('selected');
 			$('#live-filters button[data-filter-value="'+ default_live_filter +'"]').addClass('selected');
 			$('#sort-filters button[data-sort-value="'+ default_sort +'"]').addClass('selected');
-			update_selected_channels();
 			//sync_layout();
 			update_filters();
 		}
+	}
+	
+	function setup_followed() {
+		if($followed_container==0) {
+			//Check Twitch login status
+			Twitch.getStatus(function(error, status){
+				if(status.authenticated) {
+					$('.twitch-widget.authenticated').show();
+					$('.twitch-widget.not-authenticated').hide();
+					
+					Twitch.api({method: 'streams/followed'},
+						function(error, resp_obj) {
+							if(error) {
+								//display an error i guess??
+							} else {
+								populate_followed(resp_obj['streams']);
+							}
+						});
+
+				} else {
+					$('.twitch-widget.authenticated').hide();
+					$('.twitch-widget.not-authenticated').show();
+					
+					$('.connect-twitch').click(function() {
+						Twitch.login({
+							redirect_uri: base_url,
+							popup: false,
+							scope: ['user_read'],
+						});
+					}).css('cursor','pointer');
+				}
+			});
+		} else {
+			update_form_channels();
+		}
+	}
+	
+	function populate_followed(streams_obj) {
+		channel_list = '';
+		
+		for(var i=0; i<streams_obj.length; i++) {
+			channel_list += 
+			"<div class='channel live' rel='" + streams_obj[i]['channel']['name'] + "'>" +
+				"<div class=channelimage style='background-image: url(\"" + streams_obj[i]['preview']['medium'] + "\");'>" +
+					"<div class=channelcaption>" +
+					"<div class=channelname>" + streams_obj[i]['channel']['name'] + "</div>" +
+					(streams_obj[i]['game'] ? "<div class=game>Playing " + streams_obj[i]['game'] + "</div>" : "") +
+					"</div>" +
+				"</div>" +
+			"</div>";
+		}
+		
+		$followed_container = $('#followedlist').html(channel_list);
+		add_channellist_event_handlers($followed_container);
+		update_form_channels();
 	}
 
 	function update_filters() {
@@ -295,7 +350,7 @@ $(document).ready( function() {
 		else 
 			var cfilter = live_filter + tag_filter;
 		
-		$quickpicks.isotope({ filter: cfilter, sortBy: sort_filter });
+		$featured_container.isotope({ filter: cfilter, sortBy: sort_filter });
 	}
 		
 
@@ -338,13 +393,23 @@ $(document).ready( function() {
 	}
 
 	function update_selected_channels() {
-		$('.channel.selected').each(function(){
+		$('.channel.selected:visible').each(function(){
 			channelname = $(this).attr('rel');
 			if($('.streamfield').filter(function(){return this.value==channelname}).length == 0)
 				$(this).removeClass('selected');
 		});
 		$('.streamfield').each(function(){
-			$('.channel[rel="' + $(this).val() + '"]').addClass('selected');
+			$('.channel[rel="' + $(this).val() + '"]:visible').addClass('selected');
+		});
+	}
+	
+	function update_form_channels() {
+		$('.streamfield').each(function(){$.fn.streamfield.clear($(this).attr('id'));});
+		$('.streamfield:first').keyup();
+		$('.channel').removeClass('selected');
+		$('.channel.live:visible').each(function() {
+			$(this).addClass('selected');
+			add_to_form_streams($(this).attr('rel'));
 		});
 	}
 

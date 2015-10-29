@@ -11,6 +11,7 @@
 				<ul>
 					<li id="custom-tab-selector"><a href="#custom">Custom</a></li>
 					<li id="featured-tab-selector"><a href="#featured">Featured</a></li>
+					<li id="following-tab-selector"><a href="#following">Following</a></li>
 				</ul>
 				<div id="custom">
 					{% for stream_index in num_streams %}
@@ -53,7 +54,7 @@
 							{% endfor %}<button data-filter-value="*">All</button>
 						</div>
 					</div>
-					<div id="channellist">
+					<div id="featuredlist">
 					<div class='grid-sizer'></div>
 					{% for channel in channels %}
 						<div class="channel{% if channel.live %} live{% endif %}{% for tag in channel.tags.all %} tag-{{ tag.slug }}{% endfor %}" rel="{{ channel.name }}">
@@ -65,6 +66,15 @@
 							</div>
 						</div>
 					{% endfor %}
+					</div>
+				</div>
+				<div id="following" class="clearfix">
+					<div class='authenticate twitch-widget not-authenticated'>
+						<div><em>You must connect with Twitch to see your followed channels here.</em></div>
+						<img class="connect-twitch" src="{{ base_url }}static/images/connect-twitch.png" />
+					</div>
+					<div id="followedlist" class='channellist twitch-widget authenticated'>
+						<div class='loading'>Loading...</div>
 					</div>
 				</div>
 			</div>
