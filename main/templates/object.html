@@ -2,16 +2,16 @@
 					{% if obj.objtype == "stream" or obj.objtype == "both" %}
 					<div class="streamcontainer{% if obj.index == 0 %} audio chat{% endif %}" data-tag="{{ obj.tag }}" data-index="{{ obj.index }}" data-object-type="stream">
 						{% if use_live_embeds %}
-							{% if use_flash_player %}<object type="application/x-shockwave-flash" data="https://www.twitch.tv/widgets/live_embed_player.swf?channel={{ obj.tag }}" bgcolor="#000000" wmode="transparent">
+							{% if use_flash_player %}<object type="application/x-shockwave-flash" data="//www.twitch.tv/widgets/live_embed_player.swf?channel={{ obj.tag }}" bgcolor="#000000" wmode="transparent">
 								<param name="allowFullScreen" value="true" />
 								<param name="allowScriptAccess" value="always" />
 								<param name="allowNetworking" value="all" />
-								<param name="movie" value="https://www.twitch.tv/widgets/live_embed_player.swf" />
+								<param name="movie" value="//www.twitch.tv/widgets/live_embed_player.swf" />
 								<param name="flashvars" value="hostname=www.twitch.tv&channel={{ obj.tag }}&auto_play=true&start_volume=75" />
 								<param name="wmode" value="transparent" />
 							</object>
 							{% else %}
-							 <iframe type="text/html" src="https://www.twitch.tv/{{ obj.tag }}/hls" frameborder="0"></iframe>
+							 <iframe type="text/html" src="//www.twitch.tv/{{ obj.tag }}/hls" frameborder="0"></iframe>
 							{% endif %}
 						{% else %}
 							<!-- Stream embed would go here -->
@@ -31,7 +31,7 @@
 							
 							</div>
 							<div class='auxbuttons'>
-								<button class='profilebutton' onClick="window.open('https://twitch.tv/{{ obj.tag }}/profile', '_blank');" title='Profile'><span class="profileicon"></span> Profile &raquo;</button>
+								<button class='profilebutton' onClick="window.open('//www.twitch.tv/{{ obj.tag }}/profile', '_blank');" title='Profile'><span class="profileicon"></span> Profile &raquo;</button>
 								<button class='reloadstream' data-tag='{{ obj.tag }}' title='Reload'><span class="reloadicon"></span> Reload</button>
 								<button class='closebutton hidden-when-one-stream' data-tag='{{ obj.tag }}' title='Close'><span class="closeicon"></span> Close</button>
 							</div>
@@ -44,7 +44,7 @@
 					
 					<div class="chatcontainer{% if obj.index == 0 %} current{% endif %}" data-tag="{{ obj.tag }}" data-index="{{ obj.index }}" data-object-type="chat">
 						{% if use_live_embeds %}
-							<iframe frameborder="0" scrolling="no" src="https://www.twitch.tv/{{ obj.tag }}/chat?popout="></iframe>
+							<iframe frameborder="0" scrolling="no" src="//www.twitch.tv/{{ obj.tag }}/chat?popout="></iframe>
 						{% else %}
 							<!-- Chat embed would go here -->
 						{% endif %}
