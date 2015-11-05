@@ -380,7 +380,7 @@ $(document).ready( function() {
 	function add_to_form_streams(streamname) {
 		if($('.streamfield').filter(function(){return this.value==streamname}).length == 0) {
 			$first_empty = $('.streamfield').filter(function(){return this.value==""}).first();
-			$first_empty.val(streamname).attr('data-tag',streamname).keyup();
+			$first_empty.val(streamname).attr('data-tag',streamname);
 			return true;
 		} else {
 			return false;
@@ -389,7 +389,7 @@ $(document).ready( function() {
 
 	function remove_from_form_streams(streamname) {
 		$already_selected = $('.streamfield').filter(function(){return this.value==streamname});
-		$already_selected.val("").attr('data-tag','').keyup();
+		$already_selected.val("").attr('data-tag','');
 	}
 
 	function update_selected_channels() {

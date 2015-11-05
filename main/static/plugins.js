@@ -84,7 +84,7 @@
 							//some other API error, give up
 							$.fn.streamfield.set_status(field_id,'');
 						}
-					} else {						
+					} else {
 						if(resp_obj['stream']) {
 							$.fn.streamfield.set_status(field_id,'existsandstreaming');
 						} else {
