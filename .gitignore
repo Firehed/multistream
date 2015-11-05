@@ -47,3 +47,6 @@ Thumbs.db
 TODOs
 *.geany
 contributors.txt
+bin/
+bin/deploy.sh
+main/site_specific_settings.py
