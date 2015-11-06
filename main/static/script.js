@@ -324,7 +324,7 @@ $(document).ready( function() {
 		
 		if(streams_obj.length < 1) {
 			channel_list += 
-				"<div class='notice'>No live streams were found."
+				"<div class='notice'>No live streams were found.</div>"
 		} else {
 			for(var i=0; i<streams_obj.length; i++) {
 				channel_list += 
