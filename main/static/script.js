@@ -322,16 +322,21 @@ $(document).ready( function() {
 	function populate_followed(streams_obj) {
 		channel_list = '';
 		
-		for(var i=0; i<streams_obj.length; i++) {
+		if(streams_obj.length < 1) {
 			channel_list += 
-			"<div class='channel live' rel='" + streams_obj[i]['channel']['name'] + "'>" +
-				"<div class=channelimage style='background-image: url(\"" + streams_obj[i]['preview']['medium'] + "\");'>" +
-					"<div class=channelcaption>" +
-					"<div class=channelname>" + streams_obj[i]['channel']['name'] + "</div>" +
-					(streams_obj[i]['game'] ? "<div class=game>Playing " + streams_obj[i]['game'] + "</div>" : "") +
+				"<div class='notice'>No live streams were found."
+		} else {
+			for(var i=0; i<streams_obj.length; i++) {
+				channel_list += 
+				"<div class='channel live' rel='" + streams_obj[i]['channel']['name'] + "'>" +
+					"<div class=channelimage style='background-image: url(\"" + streams_obj[i]['preview']['medium'] + "\");'>" +
+						"<div class=channelcaption>" +
+						"<div class=channelname>" + streams_obj[i]['channel']['name'] + "</div>" +
+						(streams_obj[i]['game'] ? "<div class=game>Playing " + streams_obj[i]['game'] + "</div>" : "") +
+						"</div>" +
 					"</div>" +
-				"</div>" +
-			"</div>";
+				"</div>";
+			}
 		}
 		
 		$followed_container = $('#followedlist').html(channel_list);
