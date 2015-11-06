@@ -396,7 +396,7 @@ $(document).ready( function() {
 
 	function remove_from_form_streams(streamname) {
 		$already_selected = $('.streamfield').filter(function(){return this.value==streamname});
-		$already_selected.val("").attr('data-tag','');
+		$already_selected.val("").attr('data-tag','').keyup();
 	}
 
 	function update_selected_channels() {
