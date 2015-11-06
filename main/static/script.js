@@ -173,6 +173,8 @@ $(document).ready( function() {
 		
 		if(window.location.hash.substring(0,9) == "#featured")
 			setTimeout(function(){$('#featured-tab-selector a').click();}, 100);
+		if(window.location.hash.substring(0,13) == "#access_token" || window.location.hash.substring(0,10) == "#following")
+			setTimeout(function(){$('#following-tab-selector a').click();}, 100);
 
 	}
 	
