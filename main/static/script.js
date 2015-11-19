@@ -94,7 +94,7 @@ $(document).ready( function() {
 	 
 	function add_index_event_handlers($element) {
 		
-		$('#popupform .ui-tabs-nav').css('cursor','move !important');
+		$('#popupform .ui-tabs-nav').css('cursor','move');
 		$('#popupform').draggable();
 	
 		$element.find('button[type="submit"]').click(function(e) {
