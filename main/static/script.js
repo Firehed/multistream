@@ -387,7 +387,7 @@ $(document).ready( function() {
 	function add_to_form_streams(streamname) {
 		if($('.streamfield').filter(function(){return this.value==streamname}).length == 0) {
 			$first_empty = $('.streamfield').filter(function(){return this.value==""}).first();
-			$first_empty.val(streamname).attr('data-tag',streamname);
+			$first_empty.val(streamname).attr('data-tag',streamname).keyup();
 			return true;
 		} else {
 			return false;
