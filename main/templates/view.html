@@ -6,7 +6,7 @@
 		#layoutwrapper[data-layout-index="{{ l.index }}"] { width:{{ l.max_x }}%; height:{{ l.max_y }}%; }
 		{% for s in l.streams %}
 		#layoutwrapper[data-layout-index="{{ l.index }}"] .streamcontainer[data-index="{{ s.index }}"] { display: block; width:{{ s.dim.x }}%; height:{{ s.dim.y }}%; left:{{ s.pos.x }}%; top:{{ s.pos.y }}%; }
-		#layoutwrapper[data-layout-index="{{ l.index }}"] .streamoverlay[data-index="{{ s.index }}"] { display: block; width:{{ s.dim.x }}%; height:{{ s.dim.y|add:-15 }}%; left:{{ s.pos.x }}%; top:{{ s.pos.y }}%; }
+		#layoutwrapper[data-layout-index="{{ l.index }}"] .streamoverlay[data-index="{{ s.index }}"] { display: block; width:{{ s.dim.x }}%; left:{{ s.pos.x }}%; top:{{ s.pos.y }}%; }
 		{% endfor %}
 		{% for c in l.chats %}
 		#layoutwrapper[data-layout-index="{{ l.index }}"] .chatcontainer[data-index="{{ c.index }}"] { display: block; width:{{ c.dim.x }}%; height:{{ c.dim.y }}%; left:{{ c.pos.x }}%; top:{{ c.pos.y }}%; }

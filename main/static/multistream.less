@@ -576,12 +576,13 @@ span.deleteicon {
 	position:absolute;
 	display: none;
 	
-	object {
+	object, iframe {
 		height: 100%;
 		width: 100%;
+		border: none;
 	}
 	
-	&.inactive object {
+	&.inactive object, &.inactive iframe {
 		opacity: 0;
 	}
 	
@@ -603,6 +604,7 @@ span.deleteicon {
 		height: 99%;
 		height: calc(100% - 25px);
 		width: 100%;
+		border: none;
 	}
 	
 	&.current {
@@ -629,6 +631,7 @@ span.deleteicon {
 	display: none;
 	position:absolute; 
 	z-index:10; 
+	height: 6.5em;
 	
 	& > .audioicon,
 	& > .chaticon {

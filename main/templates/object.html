@@ -7,11 +7,11 @@
 								<param name="allowScriptAccess" value="always" />
 								<param name="allowNetworking" value="all" />
 								<param name="movie" value="//www.twitch.tv/widgets/live_embed_player.swf" />
-								<param name="flashvars" value="hostname=www.twitch.tv&channel={{ obj.tag }}&auto_play=true&start_volume=75" />
+								<param name="flashvars" value="hostname=www.twitch.tv&channel={{ obj.tag }}&auto_play=true&start_volume=50" />
 								<param name="wmode" value="transparent" />
 							</object>
 							{% else %}
-							 <iframe type="text/html" src="//www.twitch.tv/{{ obj.tag }}/hls" frameborder="0"></iframe>
+							 <iframe type="text/html" src="//player.twitch.tv/?volume=0.5&channel={{ obj.tag }}{% if obj.index != 0 %}&muted=true{% endif %}" frameborder="0"></iframe>
 							{% endif %}
 						{% else %}
 							<!-- Stream embed would go here -->
