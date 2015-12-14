@@ -1,11 +1,8 @@
 {% extends "base.html" %}
-{% block script %}
-	{% if use_live_embeds %}<script src='http://Q1MediaHydraPlatform.com/ads/video/controller.php?qid=5503132d7de38ca82fe6dd8e&qz=1'></script>{% endif %}
-{% endblock %}
 {% block body %}
 	<div id="contentwrapper" class="indextemplate">
 		<a id="logo" href="http://kbmod.com"></a>
-		<a id="sponsorlogo" href="http://pcpartpicker.com"></a>
+		<!--a id="sponsorlogo" href="http://pcpartpicker.com"></a-->
 		<form id="buildlayoutform" method="GET" action="{{ base_url }}view/">
 			<div class="tabs">
 				<ul>
@@ -82,14 +79,14 @@
 		<div id="submitbuttoncontainer" class='clearfix'><button id='clearbutton'>Clear</button><button id='cancelbutton'>Cancel</button><button type="submit" value="Watch Streams">Watch Streams</button></div>
 		<div style="clear:both;"></div>
 		<ul id="menu-primary-menu" class="menu">
-			<li><em>More from KBMOD:</em></li>
-			<li id='menu-item-home'  class="menu-item menu-item-type-taxonomy menu-item-object-category"><a  href="//kbmod.com/" target="_blank">Home</a> </li>
-			<li id='menu-item-11389'  class="menu-item menu-item-type-taxonomy menu-item-object-category"><a  href="//kbmod.com/category/podcast/" target="_blank">Podcast</a> </li>
-			<li id='menu-item-11310'  class="menu-item menu-item-type-taxonomy menu-item-object-category"><a  href="//kbmod.com/category/build-guides/" target="_blank">Build Guides</a> </li>
-			<li id='menu-item-16005'  class="menu-item menu-item-type-taxonomy menu-item-object-category"><a  href="//kbmod.com/category/review/" target="_blank">Reviews</a> </li>
-			<li id='menu-item-14850'  class="menu-item menu-item-type-custom menu-item-object-custom"><a  href="//kbmod.com/forums" target="_blank">Forums</a> </li>
-			<li id='menu-item-14853'  class="menu-item menu-item-type-post_type menu-item-object-page"><a  href="//kbmod.com/community/" target="_blank">Community</a> </li>
-			<li id='menu-item-14854'  class="menu-item menu-item-type-post_type menu-item-object-page"><a  href="//kbmod.com/merch/" target="_blank">Merch</a> </li>
+			<li><a href="//kbmod.com/" target="_blank">KBMOD</a> </li>
+			<li><a href="//kbmod.com/category/podcast/" target="_blank">Podcast</a> </li>
+			<li><a href="//kbmod.com/category/build-guides/" target="_blank">Build Guides</a> </li>
+			<li><a href="//kbmod.com/category/review/" target="_blank">Reviews</a> </li>
+			<li><a href="//kbmod.com/forums/" target="_blank">Forums</a> </li>
+			<li><a href="//kbmod.com/community/" target="_blank">Community</a> </li>
+			<li><a href="//kbmod.com/merch/" target="_blank">Merch</a> </li>
+			<li class='tip'><em>Like Multistream?</em> <a class='bitcoin-tip'></a></li>
 		</ul>
 		</form>
 	</div>

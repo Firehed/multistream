@@ -167,6 +167,14 @@ $(document).ready( function() {
 			update_filters();
 		});
 		
+		$element.find('.bitcoin-tip').coinTipper({
+			type: 'tip',
+			currency: 'bitcoin',
+			iso: 'BTC',
+			address: '1JWQeyFV3AqLxtTM9H53Qb487c1wCXDBEH',
+			label: 'The Multistream Dev Tip Jar'
+		});
+		
 
 		$element.find('.tabs').tabs();
 		sync_layout();

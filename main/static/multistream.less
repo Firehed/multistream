@@ -7,15 +7,17 @@
 @vltgrey: #aaaaaa;
 @blue: #1969AB;
 
-* { margin: 0; }
+* { margin: 0; box-sizing: border-box; }
 
-.clearfix:after {
+.clearfix {
+&:after {
     content: ".";
     display: block;
     clear: both;
     visibility: hidden;
     line-height: 0;
     height: 0;
+}
 }
 
 .floatleft {
@@ -275,16 +277,21 @@ span.deleteicon {
 #menu-primary-menu {
 	width: 100%;
 	list-style-type: none;
-	padding: 5px 0;
-	text-align: center;
+	padding: 4px 5px 5px;
+	text-align: left;
 	background: #eee;
 	
 	li {
 		display: inline-block;
 		font-size: 80%;
 		
-		a {
+		a, a.donate-btn {
 			color: @black;
+			background: transparent;
+			font-family: inherit;
+			font-size: inherit;
+			line-height: inherit;
+			border-radius: 0;
 			text-decoration: none;
 			padding: 2px 5px;
 			
@@ -292,6 +299,11 @@ span.deleteicon {
 				background: #1969ab;
 				color: white;
 			}
+			
+		}
+		
+		&.tip {
+			float: right;
 		}
 	}
 }
@@ -632,7 +644,7 @@ span.deleteicon {
 	& > .chaticon {
 		float: left;
 		clear: left;
-		padding: 4px 8px;
+		margin: 4px 8px;
 		display: none;
 		opacity: 0.4;
 	}
@@ -681,7 +693,7 @@ span.deleteicon {
 	height: 0;
 	padding: 0;
 	overflow: hidden;
-	transition: height 0.3s, padding 0.3s;
+	transition: height 0.3s;
 	display: inline;
 	position: absolute;
 	left: 0;
@@ -692,8 +704,7 @@ span.deleteicon {
 	
 	.streamoverlay:hover &,
 	.streamoverlay.dummy & {
-		height: 3.5em;
-		padding: 1em 0 1.75em;
+		height: 6.25em;
 	}
 	.streamoverlay:hover & {
 		.auxbuttons, .mainbuttons {
@@ -703,6 +714,7 @@ span.deleteicon {
 }
 
 .overlaycaption {
+	margin-top: .75em;
 	color: white;
 	font-size: 24px;
 }
@@ -847,7 +859,7 @@ span.deleteicon {
 	position: absolute;
 	bottom: 0;
 	display: block;
-	width: 99%;
+	width: 100%;
 	background: @black;
 	color: white;
 	font-size: 16px;
@@ -1049,4 +1061,8 @@ ol.chatmenu {
 	}
 }
 
+/* CoinTipper Overrides */
 
+[id*='-donation-overlay'] {
+	font-family: inherit;
+}
