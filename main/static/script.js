@@ -171,7 +171,7 @@ $(document).ready( function() {
 			type: 'tip',
 			currency: 'bitcoin',
 			iso: 'BTC',
-			address: '1JWQeyFV3AqLxtTM9H53Qb487c1wCXDBEH',
+			address: '1JVbX2swtrn2ydSik8Q8zweUXWDnxXniyg',
 			label: 'The Multistream Dev Tip Jar'
 		});
 		
@@ -395,7 +395,7 @@ $(document).ready( function() {
 	function add_to_form_streams(streamname) {
 		if($('.streamfield').filter(function(){return this.value==streamname}).length == 0) {
 			$first_empty = $('.streamfield').filter(function(){return this.value==""}).first();
-			$first_empty.val(streamname).attr('data-tag',streamname).keyup();
+			$first_empty.val(streamname).attr('data-tag',streamname).attr('data-skip-streamcheck','true').keyup();
 			return true;
 		} else {
 			return false;
@@ -423,8 +423,8 @@ $(document).ready( function() {
 		$('.streamfield:first').keyup();
 		$('.channel').removeClass('selected');
 		$('.channel.live:visible').each(function() {
-			$(this).addClass('selected');
-			add_to_form_streams($(this).attr('rel'));
+			if(add_to_form_streams($(this).attr('rel')));
+				$(this).addClass('selected');
 		});
 	}
 

@@ -65,6 +65,11 @@
 		
 		if ($.fn.streamfield.fields[field_id].querying) return;
 		
+		if ($('#' + field_id).attr('data-skip-streamcheck') == 'true') {
+			$('#' + field_id).removeAttr('data-skip-streamcheck');
+			return;
+		}
+		
 		var channel_tag = $('#' + field_id).val();
 		
 		if (channel_tag) {

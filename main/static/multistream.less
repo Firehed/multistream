@@ -432,20 +432,10 @@ span.deleteicon {
 	
 	.channellist {
 		.channel {
-			width: 11.5%;
-			width: calc(12.5% - 10px);
-			height: 40px;
-			
+			height: 45px;
 			&.live {
-				width: 23.5%;
-				width: calc(25% - 10px);
 				height: 90px;
 			}
-		}
-		
-		.grid-sizer {
-			width: 12.5%;
-			height: 40px;
 		}
 	}
 	
@@ -728,7 +718,7 @@ span.deleteicon {
 	width: 1em;
 	height: 1em;
 	line-height: 0.95em;
-	margin: 0.3em auto 0;
+	margin: 0.8em auto 0;
 	.dummy & {
 		display: block;
 	}
@@ -912,12 +902,10 @@ ol.chatmenu {
 
 .channellist {
 	.channel {
-		width: 11.5%;
-		width: calc(12.5% - 10px);
-		height: 60px;
+		width: 12.5%;
+		height: 65px;
 		float: left;
-		padding: 0.5%;
-		padding: calc(5px);
+		padding: 5px;
 		cursor: pointer;
 		border-radius: 3px;
 		vertical-align: middle;
@@ -926,8 +914,7 @@ ol.chatmenu {
 		&:hover,
 		&.selected {
 			background: rgba(0,0,0,0.1);
-			padding: 0.5%;
-			padding: calc(4px);
+			padding: 4px;
 			border: solid 1px rgba(0,0,0,0.3);
 		}
 	}
@@ -940,8 +927,7 @@ ol.chatmenu {
 	.channel {
 		&.live {
 			opacity: 0.7;
-			width: 23.5%;
-			width: calc(25% - 10px);
+			width: 25%;
 			height: 130px;
 			
 			&:hover {
