@@ -58,7 +58,7 @@
 							<div class=channelimage style="background-image: url('{{ channel.image }}');">
 								<div class=channelcaption>
 									<div class=channelname>{{ channel.name }}</div>
-									{% if channel.game and channel.live %}<div class=game>Playing {{ channel.game }}</div>{% endif %}
+									{% if channel.game and channel.live %}<div class=game>{{ channel.game }}</div>{% endif %}
 								</div>
 							</div>
 						</div>
@@ -67,8 +67,7 @@
 				</div>
 				<div id="following" class="clearfix">
 					<div class='authenticate twitch-widget not-authenticated'>
-						<div>You must connect with Twitch to see your followed channels here.<br />
-						<em>This feature is in beta, please bear with us while we work out the kinks.</em></div>
+						<div>Click the button to connect with Twitch and see your followed channels.</div>
 						<img class="connect-twitch" src="{{ base_url }}static/images/connect-twitch.png" />
 					</div>
 					<div id="followedlist" class='channellist twitch-widget authenticated'>

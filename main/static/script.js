@@ -342,7 +342,7 @@ $(document).ready( function() {
 					"<div class=channelimage style='background-image: url(\"" + streams_obj[i]['preview']['medium'] + "\");'>" +
 						"<div class=channelcaption>" +
 						"<div class=channelname>" + streams_obj[i]['channel']['name'] + "</div>" +
-						(streams_obj[i]['game'] ? "<div class=game>Playing " + streams_obj[i]['game'] + "</div>" : "") +
+						(streams_obj[i]['game'] ? "<div class=game>" + streams_obj[i]['game'] + "</div>" : "") +
 						"</div>" +
 					"</div>" +
 				"</div>";
