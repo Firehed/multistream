@@ -5,7 +5,6 @@ from site_specific_settings import CLIENT_ID
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.template import loader, RequestContext
-from django.views.decorators.csrf import csrf_exempt
 
 from models import *
 
@@ -329,8 +328,6 @@ def view_tag(request, tag = ''):
 
 #Run this via a cron job. i.e., curl http://localhost/multistream/ms-update_streams/
 def update_streams(request):
-	if get_client_ip(request) != '127.0.0.1':
-		return HttpResponse("that request can only be performed locally.")
 
 	twitch = TwitchAPI()
 	channels = [x for x in Channel.objects.filter(active=True) if x.current()]
@@ -357,9 +354,6 @@ def update_streams(request):
 		return HttpResponse("twitchapi not responding")
 
 def update_channels(request):
-	if get_client_ip(request) != '127.0.0.1':
-		return HttpResponse("that request can only be performed locally.")
-
 	twitch = TwitchAPI()
 	channels = [x for x in Channel.objects.filter(active=True) if x.current()]
 	
@@ -443,12 +437,3 @@ def remove_duplicates(seq):
 	seen = set()
 	seen_add = seen.add
 	return [ x for x in seq if not (x in seen or seen_add(x))]
-
-
-def get_client_ip(request):
-	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-	if x_forwarded_for:
-		ip = x_forwarded_for.split(',')[0]
-	else:
-		ip = request.META.get('REMOTE_ADDR')
-	return ip
