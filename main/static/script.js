@@ -395,8 +395,12 @@ $(document).ready( function() {
 	function add_to_form_streams(streamname) {
 		if($('.streamfield').filter(function(){return this.value==streamname}).length == 0) {
 			$first_empty = $('.streamfield').filter(function(){return this.value==""}).first();
-			$first_empty.val(streamname).attr('data-tag',streamname).attr('data-skip-streamcheck','true').keyup();
-			return true;
+			if($first_empty.length > 0) {
+				$first_empty.val(streamname).attr('data-tag',streamname).attr('data-skip-streamcheck','true').keyup();
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -423,7 +427,7 @@ $(document).ready( function() {
 		$('.streamfield:first').keyup();
 		$('.channel').removeClass('selected');
 		$('.channel.live:visible').each(function() {
-			if(add_to_form_streams($(this).attr('rel')));
+			if(add_to_form_streams($(this).attr('rel')))
 				$(this).addClass('selected');
 		});
 	}
