@@ -2,7 +2,10 @@
 					{% if obj.objtype == "stream" or obj.objtype == "both" %}
 					<div class="streamcontainer{% if obj.index == 0 %} audio chat{% endif %}" data-tag="{{ obj.tag }}" data-index="{{ obj.index }}" data-object-type="stream">
 						{% if use_live_embeds %}
-							{% if use_flash_player %}<object type="application/x-shockwave-flash" data="//www.twitch.tv/widgets/live_embed_player.swf?channel={{ obj.tag }}" bgcolor="#000000" wmode="transparent">
+							{% if new_player %}
+							<iframe type="text/html" src="//player.twitch.tv/?volume=0.5&channel={{ obj.tag }}{% if obj.index != 0 %}&muted=true{% endif %}" frameborder="0"></iframe>
+							{% else %}
+							 <object type="application/x-shockwave-flash" data="//www.twitch.tv/widgets/live_embed_player.swf?channel={{ obj.tag }}" bgcolor="#000000" wmode="transparent">
 								<param name="allowFullScreen" value="true" />
 								<param name="allowScriptAccess" value="always" />
 								<param name="allowNetworking" value="all" />
@@ -10,8 +13,6 @@
 								<param name="flashvars" value="hostname=www.twitch.tv&channel={{ obj.tag }}&auto_play=true&start_volume=50" />
 								<param name="wmode" value="transparent" />
 							</object>
-							{% else %}
-							 <iframe type="text/html" src="//player.twitch.tv/?volume=0.5&channel={{ obj.tag }}{% if obj.index != 0 %}&muted=true{% endif %}" frameborder="0"></iframe>
 							{% endif %}
 						{% else %}
 							<!-- Stream embed would go here -->

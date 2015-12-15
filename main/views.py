@@ -303,7 +303,7 @@ def view_streams(request, streams_url=''):
 		'layout_groups': LAYOUT_GROUPS,
 		'layout_group': layout_group,
 		'use_live_embeds' : settings.USE_LIVE_EMBEDS,
-		'use_flash_player' : settings.USE_FLASH_PLAYER,
+		'new_player' : settings.NEW_PLAYER,
 		'edit_url': '/' + settings.URL_INFIX + 'edit/%s/' % ('/'.join(streams).lower()),
 		'client_id': CLIENT_ID,
 	})
@@ -405,7 +405,7 @@ def get_object(request,obj_type=None,obj_tag=None,obj_index=-1):
 				'tag' : obj_tag,
 			},
 			'use_live_embeds' : settings.USE_LIVE_EMBEDS,
-			'use_flash_player' : settings.USE_FLASH_PLAYER,
+			'new_player' : settings.NEW_PLAYER,
 		})
 		return HttpResponse(t.render(c))
 		

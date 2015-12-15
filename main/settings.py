@@ -3,7 +3,7 @@ import os.path
 # Django settings for multistream project.
 
 from site_specific_settings import *
-USE_FLASH_PLAYER = True
+NEW_PLAYER = False
 
 MANAGERS = ADMINS
 
@@ -63,9 +63,6 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'a@j)@cwmc!&amp;_1x!qzv)epfemw#k%a&amp;h)18w@!!sfhj3b=a*0px'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
