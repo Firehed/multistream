@@ -1,5 +1,5 @@
 import json, urllib2
-from site_specific_settings import CLIENT_ID
+from site_specific_settings import CLIENT_ID, DEBUG
 
 class TwitchAPI:
 	def __init__(self):
@@ -10,7 +10,7 @@ class TwitchAPI:
 			'Accept': 'application/vnd.twitchtv.v3+json',
 			'Client-ID': self.client_id,
 		}
-		self.DEBUG = True
+		self.DEBUG = DEBUG
 
 	def request(self,command,params=False):
 

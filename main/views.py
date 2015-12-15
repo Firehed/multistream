@@ -329,6 +329,9 @@ def view_tag(request, tag = ''):
 
 #Run this via a cron job. i.e., curl http://localhost/multistream/ms-update_streams/
 def update_streams(request):
+	if get_client_ip(request) != '127.0.0.1':
+		return HttpResponse("that request can only be performed locally.")
+
 	twitch = TwitchAPI()
 	channels = [x for x in Channel.objects.filter(active=True) if x.current()]
 	channel_list = [channel.name for channel in channels]
@@ -354,6 +357,9 @@ def update_streams(request):
 		return HttpResponse("twitchapi not responding")
 
 def update_channels(request):
+	if get_client_ip(request) != '127.0.0.1':
+		return HttpResponse("that request can only be performed locally.")
+
 	twitch = TwitchAPI()
 	channels = [x for x in Channel.objects.filter(active=True) if x.current()]
 	
@@ -417,7 +423,7 @@ def get_object(request,obj_type=None,obj_tag=None,obj_index=-1):
 #utility junk
 
 def streams_from_url(streams_url):
-	return [x for x in streams_url.split("/") if x != '' and x[:6] != 'layout']
+	return [x for x in streams_url.split("/")[:MAX_STREAMS] if x != '' and x[:6] != 'layout']
 	
 def layout_from_url(streams_url):
 	layout_pattern = re.compile(r"layout=?([0-9][0-9]?)", re.IGNORECASE)
@@ -431,9 +437,18 @@ def layout_from_url(streams_url):
 
 def default_layout(stream_count=1):
 	return LAYOUT_GROUPS[stream_count - 1][0].index
-	
+
 
 def remove_duplicates(seq):
 	seen = set()
 	seen_add = seen.add
 	return [ x for x in seq if not (x in seen or seen_add(x))]
+
+
+def get_client_ip(request):
+	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+	if x_forwarded_for:
+		ip = x_forwarded_for.split(',')[0]
+	else:
+		ip = request.META.get('REMOTE_ADDR')
+	return ip

@@ -11,7 +11,7 @@
 		<script type="text/javascript" src="{{ base_url }}static/jquery.cointipper-pack.min.js"></script>
 		<script type="text/javascript" src="{{ base_url }}static/plugins.js"></script>
 		<script type="text/javascript" src="{{ base_url }}static/script.js"></script>
-		<script type=text/javascript>
+		<script type="text/javascript">
 			var base_url = "{{ base_url }}";
 			var layout_groups = { {% for g in layout_groups %}{{ forloop.counter }}: { {% for l in g %}{{ l.index }}: {'haschat': {% if l.has_chat %}true{% else %}false{% endif %},},{% endfor %} },{% endfor %} };
 			
