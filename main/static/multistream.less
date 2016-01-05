@@ -198,16 +198,6 @@ span.deleteicon {
 	height: 100%;
 	width: 60px;
 	
-	a.logo {
-		position: absolute;
-		left: 0;
-		bottom: 0;
-		display: block;
-		width: 100%;
-		height: 280px;
-		background: url('images/multistream-white-sideways2.png') center center no-repeat;
-	}
-	
 	a.edit {
 		display: block;
 		background: rgba(0,0,0,0.5) url('images/edit-white.png') center center no-repeat;
@@ -238,7 +228,7 @@ span.deleteicon {
 		position: relative;
 		width: 95%;
 		max-width: 1030px;
-		min-width: 700px;
+		min-width: 768px;
 		height: auto;
 		margin-left: auto;
 		margin-right: auto;
@@ -262,16 +252,35 @@ span.deleteicon {
 	width: 100%;
 	height: 120px;
 	background: @black url('images/multi-logo.png') 40px 40px no-repeat;
+
+	#sidebar & {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		display: block;
+		width: 100%;
+		height: 280px;
+		background: url('images/multistream-white-sideways2.png') center center no-repeat;
+	}
 }
 
 #sponsorlogo {
 	position: absolute;
-	right: 50px;
-	top: 70px;
+	right: 30px;
+	top: 50px;
 	display: block;
-	width: 214px;
-	height: 44px;
-	background: url('images/pcpplogo.png') center center no-repeat;
+	width: 308px;
+	height: 60px;
+	background: url('images/monoprice-logo.png') left top no-repeat;
+
+	#sidebar & {
+		position: relative;
+		left: 3px;
+		top: 5px;
+		width: 53px;
+		height: 100px;
+		background: url('images/monoprice-sidebar.png') left top no-repeat;
+	}
 }
 
 #menu-primary-menu {
@@ -305,6 +314,7 @@ span.deleteicon {
 		
 		&.tip {
 			float: right;
+			padding-top: 2px;
 		}
 	}
 }
@@ -365,7 +375,7 @@ span.deleteicon {
 	font-style: italic;
 	color: #888;
 	position: absolute;
-	right: 1em;
+	right: 30px;
 	top: 2em;
 	
 	a {
@@ -379,6 +389,7 @@ span.deleteicon {
 	
 	#popupform & {
 		top: 1em;
+		right: 1em;
 	}
 }
 
