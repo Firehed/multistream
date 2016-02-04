@@ -371,7 +371,8 @@ def update_channels(request):
 def live_now(request):
 	channel_q = request.GET.get('channel',0)
 	if not channel_q:
-		channels = [x for x in Channel.objects.filter(active=True,live=True) if x.current()]
+		kbmod_tag = Tag.objects.filter(name="KBMOD")[0]
+		channels = [x for x in Channel.objects.filter(tags=kbmod_tag,active=True,live=True) if x.current()]
 		kbmod = Channel.objects.filter(name__iexact='kbmod')
 		c = RequestContext(request, {
 			'channels': channels,
