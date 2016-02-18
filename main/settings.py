@@ -3,7 +3,7 @@ import os.path
 # Django settings for multistream project.
 
 from site_specific_settings import *
-NEW_PLAYER = True
+NEW_PLAYER = False
 
 MANAGERS = ADMINS
 
