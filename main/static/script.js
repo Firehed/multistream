@@ -455,6 +455,8 @@ $(document).ready( function() {
 		$other_ovr.removeClass('audio');
 		$new_ovr.addClass('audio');
 
+		//old player code
+		/*
 		$other_str.find('object,embed').each(function(){
 			try { $(this)[0].mute(); }
 			catch(e) {}
@@ -463,6 +465,14 @@ $(document).ready( function() {
 			try { $(this)[0].unmute(); }
 			catch(e) {}
 		});
+		*/
+		for(key in player_objs) {
+			if(player_objs[key].getChannel() == tag) {
+				player_objs[key].setMuted(false);
+			} else {
+				player_objs[key].setMuted(true);
+			}
+		}
 	}
 
 	function choose_stream_chat(tag) {
@@ -620,6 +630,8 @@ $(document).ready( function() {
 			$('[data-object-type="stream"][data-tag="' + tags[i] + '"]').remove();
 			$('[data-object-type="chat"][data-tag="' + tags[i] + '"]').remove();
 			$('.chatselector[data-tag="' + tags[i] + '"]').remove();
+
+			if(player_objs[tags[i]]) delete player_objs[tags[i]];
 		}
 	}
 	

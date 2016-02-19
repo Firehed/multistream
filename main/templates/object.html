@@ -3,7 +3,16 @@
 					<div class="streamcontainer{% if obj.index == 0 %} audio chat{% endif %}" data-tag="{{ obj.tag }}" data-index="{{ obj.index }}" data-object-type="stream">
 						{% if use_live_embeds %}
 							{% if new_player %}
-							<iframe type="text/html" src="//player.twitch.tv/?volume=0.5&channel={{ obj.tag }}{% if obj.index != 0 %}&muted=true{% endif %}" frameborder="0"></iframe>
+							<!--iframe type="text/html" src="//player.twitch.tv/?volume=0.5&channel={{ obj.tag }}{% if obj.index != 0 %}&muted=true{% endif %}" frameborder="0"></iframe-->
+							
+							<div class='videowrapper' id="stream-{{ obj.tag }}"></div>
+							<script type="text/javascript">
+								player_objs['{{ obj.tag }}'] = new Twitch.Player("stream-{{ obj.tag }}", { channel: "{{ obj.tag }}" });
+								player_objs['{{ obj.tag }}'].setVolume(0.5);
+								{% if obj.index != 0 %}
+								player_objs['{{ obj.tag }}'].setMuted(true);
+								{% endif %}
+							</script>
 							{% else %}
 							 <object type="application/x-shockwave-flash" data="//www.twitch.tv/widgets/live_embed_player.swf?channel={{ obj.tag }}" bgcolor="#000000" wmode="transparent">
 								<param name="allowFullScreen" value="true" />

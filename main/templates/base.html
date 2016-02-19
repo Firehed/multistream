@@ -7,12 +7,14 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 		<script src="https://ttv-api.s3.amazonaws.com/twitch.min.js"></script>
+		<script src="https://player.twitch.tv/js/embed/v1.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.2/isotope.pkgd.js"></script>
 		<script type="text/javascript" src="{{ base_url }}static/jquery.cointipper-pack.min.js"></script>
 		<script type="text/javascript" src="{{ base_url }}static/plugins.js"></script>
 		<script type="text/javascript" src="{{ base_url }}static/script.js"></script>
 		<script type="text/javascript">
 			var base_url = "{{ base_url }}";
+			var player_objs = {};
 			var layout_groups = { {% for g in layout_groups %}{{ forloop.counter }}: { {% for l in g %}{{ l.index }}: {'haschat': {% if l.has_chat %}true{% else %}false{% endif %},},{% endfor %} },{% endfor %} };
 			
 			Twitch.init({clientId: "{{ client_id }}"},
