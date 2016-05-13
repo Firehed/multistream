@@ -136,6 +136,11 @@ STREAM_LAYOUTS = [
 		Stream((100,60),(0,0)),
 		Stream((50,40),(0,60)), Stream((50, 40),(50,60)),
 	]),
+	Layout([
+		Stream((100,34),(0,0)),
+		Stream((100,33),(34,0)),
+		Stream((100,33),(67,0)),
+	]),
 	# 4 streams
 	Layout([
 		Stream((75,65),(0,0)), Chat((25,65),(75,0)),
@@ -148,6 +153,12 @@ STREAM_LAYOUTS = [
 	Layout([
 		Stream((50,50),(0,0)), Stream((50,50),(50,0)),
 		Stream((50,50),(0,50)), Stream((50,50),(50,50)),
+	]),
+	Layout([
+		Stream((100,25),(0,0)),
+		Stream((100,25),(25,0)),
+		Stream((100,25),(50,0)),
+		Stream((100,25),(75,0)),
 	]),
 	# 5 Streams
 	Layout([
